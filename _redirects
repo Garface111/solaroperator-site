@@ -14,3 +14,10 @@
 /signup               /onboarding/   301
 /signup.html          /onboarding/   301
 /get-started          /onboarding/   301
+
+# ── Onboarding wizard SPA (served at /onboarding/* on Railway) ──────────
+# SPA proxies — user sees solaroperator.org/... URL while Netlify serves
+# Railway content. Status-200 rewrite so the address bar stays clean.
+# (The /accounts proxy rules above already cover the dashboard SPA.)
+/onboarding           https://web-production-49c83.up.railway.app/onboarding/   200
+/onboarding/*         https://web-production-49c83.up.railway.app/onboarding/:splat   200
