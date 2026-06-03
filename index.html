@@ -143,6 +143,73 @@
   .step h3 { font-size: 16px; font-weight: 600; margin: 4px 0 6px; }
   .step p { font-size: 14px; color: var(--color-subtle); margin: 0; line-height: 1.6; }
 
+  /* ── Example report (Excel mock) ───────────────────────── */
+  .example { background: var(--color-card-bg); }
+  .xl-frame {
+    max-width: 760px; margin: 0 auto;
+    border: 1px solid var(--color-border); border-radius: var(--radius);
+    background: #fff; box-shadow: var(--shadow-card); overflow: hidden;
+  }
+  /* Excel-style grid: row-number gutter + columns A B C D */
+  .xl-grid {
+    display: grid;
+    grid-template-columns: 38px 1.5fr 1fr 1fr 0.8fr;
+    font-size: 13px;
+  }
+  .xl-grid > div {
+    border-right: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
+    padding: 7px 10px; background: #fff;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  /* Column-letter header strip + row-number gutter.
+     Selectors are parent-qualified so they beat `.xl-grid > div`'s
+     background and don't get washed out to white. */
+  .xl-grid > .xl-colhdr, .xl-grid > .xl-rownum {
+    background: #f4f4f5; color: var(--color-muted);
+    text-align: center; font-weight: 500; font-size: 12px;
+  }
+  .xl-grid > .xl-corner { background: #f4f4f5; }
+  .xl-grid > .xl-rownum { padding: 7px 0; }
+  .xl-title {
+    grid-column: 2 / 5; font-weight: 700; color: #1f4e2a; font-size: 15px;
+  }
+  .xl-blank { background: #fff; min-height: 14px; padding: 4px 10px; }
+  .xl-grid > .xl-hdr {
+    background: #2e6b3a; color: #fff; font-weight: 700;
+    text-align: center; border-right-color: #245530;
+  }
+  .xl-q { font-weight: 700; color: #1f4e2a; }
+  .xl-num { text-align: right; font-variant-numeric: tabular-nums; }
+  .xl-ellipsis {
+    grid-column: 2 / 6; text-align: center; color: #a1a1aa;
+    letter-spacing: 4px; padding: 2px 0;
+  }
+  .xl-grid > .xl-foot {
+    grid-column: 2 / 6; font-style: italic; color: #666;
+    font-size: 11px; white-space: normal; overflow: visible;
+    text-overflow: clip; line-height: 1.5;
+  }
+  /* Sheet tabs along the bottom */
+  .xl-tabs {
+    display: flex; gap: 2px; padding: 6px 8px 0; background: #f4f4f5;
+    border-top: 1px solid var(--color-border);
+  }
+  .xl-tab {
+    font-size: 12px; font-weight: 500; color: var(--color-muted);
+    padding: 6px 14px; border: 1px solid var(--color-border);
+    border-bottom: none; border-radius: 6px 6px 0 0; background: #ececee;
+  }
+  .xl-tab.active { background: #fff; color: #1f4e2a; font-weight: 600; }
+  .xl-download {
+    text-align: center; margin: 24px auto 0;
+  }
+  .xl-download a {
+    font-size: 15px; font-weight: 500; color: var(--color-primary-hover);
+    text-decoration: none;
+  }
+  .xl-download a:hover { text-decoration: underline; }
+
   /* ── Pricing ───────────────────────────────────────────── */
   .pricing { background: var(--color-card-bg); }
   .price-card {
@@ -269,6 +336,120 @@
           edit NEPOOL IDs, send ad-hoc reports.</p>
         </div>
       </div>
+    </div>
+  </section>
+
+  <!-- Example report -->
+  <section class="example" aria-labelledby="example-title">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="example-title">See what you&apos;ll send</h2>
+        <p>Every quarter, every client gets a pixel-perfect NEPOOL-GIS workbook
+        like this one — one sheet per array.</p>
+      </div>
+
+      <figure class="xl-frame" role="img"
+        aria-label="A sample NEPOOL-GIS Excel workbook: sheet 'Demo Array A (12345)' with quarterly generation in MWh and REC counts, one sheet per array.">
+        <div class="xl-grid" aria-hidden="true">
+          <!-- column-letter header strip -->
+          <div class="xl-corner"></div>
+          <div class="xl-colhdr">A</div>
+          <div class="xl-colhdr">B</div>
+          <div class="xl-colhdr">C</div>
+          <div class="xl-colhdr">D</div>
+
+          <!-- row 1: merged title -->
+          <div class="xl-rownum">1</div>
+          <div class="xl-title">Demo Array A (12345)</div>
+          <div class="xl-blank"></div>
+
+          <div class="xl-rownum">⋮</div>
+          <div class="xl-ellipsis">· · ·</div>
+
+          <!-- row 5: header -->
+          <div class="xl-rownum">5</div>
+          <div class="xl-hdr">Quarter</div>
+          <div class="xl-hdr">Generation (MWh)</div>
+          <div class="xl-hdr">Reporting Amount</div>
+          <div class="xl-hdr">RECs†</div>
+
+          <div class="xl-rownum">⋮</div>
+          <div class="xl-ellipsis">· · ·</div>
+
+          <!-- Q3 2025 -->
+          <div class="xl-rownum">19</div>
+          <div class="xl-q">Q3 2025</div>
+          <div class="xl-num">34</div>
+          <div class="xl-num">34</div>
+          <div class="xl-num">34</div>
+          <div class="xl-rownum">20</div>
+          <div></div>
+          <div class="xl-num">32.4</div>
+          <div class="xl-num">32.4</div>
+          <div class="xl-num">32</div>
+          <div class="xl-rownum">21</div>
+          <div></div>
+          <div class="xl-num">28.8</div>
+          <div class="xl-num">28.8</div>
+          <div class="xl-num">28</div>
+          <div class="xl-rownum">22</div>
+          <div></div><div></div><div></div><div></div>
+
+          <!-- Q4 2025 -->
+          <div class="xl-rownum">23</div>
+          <div class="xl-q">Q4 2025</div>
+          <div class="xl-num">25.2</div>
+          <div class="xl-num">25.2</div>
+          <div class="xl-num">25</div>
+          <div class="xl-rownum">24</div>
+          <div></div>
+          <div class="xl-num">18.3</div>
+          <div class="xl-num">18.3</div>
+          <div class="xl-num">18</div>
+          <div class="xl-rownum">25</div>
+          <div></div>
+          <div class="xl-num">15</div>
+          <div class="xl-num">15</div>
+          <div class="xl-num">15</div>
+          <div class="xl-rownum">26</div>
+          <div></div><div></div><div></div><div></div>
+
+          <!-- Q1 2026 (most recent complete quarter) -->
+          <div class="xl-rownum">27</div>
+          <div class="xl-q">Q1 2026</div>
+          <div class="xl-num">15.6</div>
+          <div class="xl-num">15.6</div>
+          <div class="xl-num">15</div>
+          <div class="xl-rownum">28</div>
+          <div></div>
+          <div class="xl-num">17.5</div>
+          <div class="xl-num">17.5</div>
+          <div class="xl-num">17</div>
+          <div class="xl-rownum">29</div>
+          <div></div>
+          <div class="xl-num">21.4</div>
+          <div class="xl-num">21.4</div>
+          <div class="xl-num">21</div>
+
+          <div class="xl-rownum">⋮</div>
+          <div class="xl-ellipsis">· · ·</div>
+
+          <!-- row 31: footnote -->
+          <div class="xl-rownum">31</div>
+          <div class="xl-foot">† NEPOOL-GIS will award 1 REC for every MWH
+          reported. Additionally, NEPOOL-GIS will keep track of the decimal MWHs
+          and award an additional REC when the total exceeds 1 MWH.</div>
+        </div>
+        <div class="xl-tabs" aria-hidden="true">
+          <span class="xl-tab active">Demo Array A</span>
+          <span class="xl-tab">Demo Array B</span>
+        </div>
+      </figure>
+
+      <p class="xl-download">
+        <a href="https://web-production-49c83.up.railway.app/onboarding/sample.xlsx"
+           download>Download sample.xlsx →</a>
+      </p>
     </div>
   </section>
 
