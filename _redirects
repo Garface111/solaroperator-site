@@ -1,3 +1,16 @@
-/signup        https://web-production-49c83.up.railway.app/onboarding/  302
-/signup.html   https://web-production-49c83.up.railway.app/onboarding/  302
-/get-started   https://web-production-49c83.up.railway.app/onboarding/  302
+# ── Backend API (Railway) ──────────────────────────────────────────────
+# The dashboard + onboarding SPAs call the API with relative /v1/* paths and
+# assume same-origin. Proxy them to Railway so they work from solaroperator.org.
+# (Stripe webhooks + the Chrome extension still hit Railway directly.)
+/v1/*                 https://web-production-49c83.up.railway.app/v1/:splat   200
+
+# ── Account dashboard SPA (served at /app/* on Railway) ─────────────────
+# Status-200 proxy so the address bar shows solaroperator.org/accounts.
+# The SPA is built with base/basename = /accounts so assets + routing resolve.
+/accounts             https://web-production-49c83.up.railway.app/app/   200
+/accounts/*           https://web-production-49c83.up.railway.app/app/:splat   200
+
+# ── Legacy signup entrypoints → onboarding wizard ───────────────────────
+/signup               /onboarding/   301
+/signup.html          /onboarding/   301
+/get-started          /onboarding/   301
