@@ -1,0 +1,1071 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My account — Solar Operator</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="shortcut icon" href="favicon.ico">
+<link rel="apple-touch-icon" sizes="256x256" href="favicon-256.png">
+<meta name="theme-color" content="#2e6b3a">
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+         margin: 0; color: #1a2a1f; line-height: 1.6;
+         background: #fafaf7; min-height: 100vh; }
+  .nav { background: #2e6b3a; color: white; padding: 16px 24px;
+         display: flex; justify-content: space-between; align-items: center; }
+  .nav a { color: white; text-decoration: none; font-weight: 600; }
+  .nav .signout { font-size: 13px; opacity: 0.85; cursor: pointer; }
+
+  .wrap { max-width: 720px; margin: 0 auto; padding: 56px 24px 80px; }
+  h1 { color: #2e6b3a; font-size: 30px; margin: 0 0 8px; }
+  .sub { color: #4a5a4f; margin: 0 0 32px; font-size: 16px; }
+
+  .card { background: white; border-radius: 12px; padding: 28px 32px;
+          box-shadow: 0 1px 4px rgba(0,0,0,0.06); margin-bottom: 24px; }
+  .card h2 { color: #2e6b3a; font-size: 17px; margin: 0 0 16px;
+             text-transform: uppercase; letter-spacing: 0.5px; font-weight: 700; }
+  label { display: block; margin: 12px 0 6px; font-size: 13px;
+          font-weight: 600; color: #444; }
+  input, select { width: 100%; padding: 11px 14px; border: 1px solid #c8d4c4;
+          border-radius: 6px; font-size: 15px; font-family: inherit;
+          background: white; }
+  input:focus, select:focus { outline: 2px solid #2e6b3a; border-color: #2e6b3a; }
+  .row { display: flex; gap: 12px; align-items: flex-end; }
+  .row > div:first-child { flex: 1; }
+  .btn { background: #2e6b3a; color: white; border: 0; border-radius: 8px;
+         padding: 11px 22px; font-size: 14px; font-weight: 700;
+         cursor: pointer; transition: background 0.1s; white-space: nowrap; }
+  .btn:hover { background: #1f4e2a; }
+  .btn:disabled { background: #999; cursor: not-allowed; }
+  .btn-danger { background: #a04030; }
+  .btn-danger:hover { background: #7a2818; }
+  .btn-secondary { background: #557060; }
+  .btn-secondary:hover { background: #2e6b3a; }
+  .btn-block { width: 100%; padding: 13px 22px; margin-top: 14px; }
+
+  .stat { display: flex; justify-content: space-between; padding: 8px 0;
+          border-bottom: 1px solid #f0f3ef; font-size: 14px; }
+  .stat:last-child { border-bottom: 0; }
+  .stat .label { color: #667; }
+  .stat .val { font-weight: 600; color: #1a2a1f; }
+
+  .badge { display: inline-block; padding: 3px 10px; border-radius: 4px;
+           font-size: 11px; font-weight: 700; text-transform: uppercase;
+           letter-spacing: 0.4px; }
+  .badge-active { background: #d6efdc; color: #1f4e2a; }
+  .badge-canceled { background: #fdf0ed; color: #7a2818; }
+  .badge-past_due { background: #fff4d6; color: #7a5818; }
+  .badge-comped { background: #e4eaf3; color: #2a3f6b; }
+
+  .err { background: #fdf0ed; border-left: 3px solid #a04030;
+         padding: 10px 14px; color: #7a2818; font-size: 14px;
+         border-radius: 4px; margin-top: 12px; display: none; }
+  .ok { background: #d6efdc; border-left: 3px solid #2e6b3a;
+        padding: 10px 14px; color: #1f4e2a; font-size: 14px;
+        border-radius: 4px; margin-top: 12px; display: none; }
+
+  /* ─── Clients section ────────────────────────────────────────── */
+  .clients-empty { padding: 24px 4px; text-align: center; color: #888;
+                   font-size: 14px; font-style: italic; }
+  .client-list { display: flex; flex-direction: column; gap: 10px;
+                 margin: 4px 0 18px; }
+  .client-row { background: #f8faf6; border: 1px solid #e4e8e2;
+                border-radius: 8px; overflow: hidden; }
+  .client-row.inactive { opacity: 0.55; background: #f4f4f0; }
+  .client-header { display: flex; align-items: center; gap: 14px;
+                   padding: 12px 14px; cursor: pointer;
+                   user-select: none; transition: background 0.1s; }
+  .client-header:hover { background: #eef3ec; }
+  .chev { color: #557060; font-size: 11px; transition: transform 0.15s;
+          flex-shrink: 0; width: 14px; text-align: center; }
+  .client-row.open .chev { transform: rotate(90deg); }
+  .client-meta { flex: 1; min-width: 0; }
+  .client-name { font-weight: 700; color: #1a2a1f; font-size: 15px;
+                 overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .client-sub { font-size: 12px; color: #667; margin-top: 2px;
+                overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .client-pill { display: inline-block; padding: 2px 8px; border-radius: 4px;
+                 font-size: 11px; font-weight: 700; margin-left: 6px;
+                 background: #d6efdc; color: #1f4e2a; }
+  .client-pill-mut { background: #e8eae6; color: #555; }
+  .client-actions { display: flex; gap: 6px; flex-shrink: 0; }
+  .iconbtn { background: transparent; border: 1px solid #c8d4c4;
+             color: #2e6b3a; border-radius: 6px; padding: 6px 10px;
+             font-size: 12px; font-weight: 600; cursor: pointer;
+             white-space: nowrap; transition: background 0.1s; }
+  .iconbtn:hover { background: #eef3ec; }
+  .iconbtn.danger { color: #7a2818; border-color: #f0c0b8; }
+  .iconbtn.danger:hover { background: #fdf0ed; }
+
+  /* Expanded body */
+  .client-body { display: none; padding: 4px 16px 14px;
+                 border-top: 1px solid #e4e8e2; background: white; }
+  .client-row.open .client-body { display: block; }
+  .arrays-title { font-size: 11px; color: #667; text-transform: uppercase;
+                  letter-spacing: 0.6px; font-weight: 700; margin: 14px 0 8px; }
+  .arr-list { display: flex; flex-direction: column; gap: 8px; }
+  .arr-row { background: #fafaf7; border: 1px solid #e4e8e2;
+             border-radius: 6px; padding: 10px 12px;
+             display: flex; gap: 12px; align-items: flex-start; }
+  .arr-meta { flex: 1; min-width: 0; }
+  .arr-name { font-weight: 700; color: #1a2a1f; font-size: 14px; }
+  .arr-sub { font-size: 12px; color: #667; margin-top: 3px; }
+  .arr-accts { font-size: 11px; color: #557060; margin-top: 4px; }
+  .arr-actions { display: flex; gap: 6px; flex-shrink: 0; }
+  .add-arr-btn { background: transparent; border: 1px dashed #2e6b3a;
+                 color: #2e6b3a; border-radius: 6px; padding: 9px 12px;
+                 font-size: 13px; font-weight: 600; cursor: pointer;
+                 width: 100%; margin-top: 10px; transition: background 0.1s; }
+  .add-arr-btn:hover { background: #eef3ec; }
+  .arrays-empty { color: #888; font-size: 13px; font-style: italic;
+                  text-align: center; padding: 8px 4px; }
+
+  /* Modal */
+  .modal-bg { position: fixed; inset: 0; background: rgba(20,30,25,0.45);
+              display: none; align-items: center; justify-content: center;
+              padding: 24px; z-index: 100; }
+  .modal-bg.open { display: flex; }
+  .modal { background: white; border-radius: 12px; padding: 28px 30px;
+           width: 100%; max-width: 520px;
+           box-shadow: 0 18px 50px rgba(0,0,0,0.25);
+           max-height: 90vh; overflow-y: auto; }
+  .modal h3 { margin: 0 0 4px; color: #2e6b3a; font-size: 19px; }
+  .modal .modal-sub { color: #667; font-size: 13px; margin: 0 0 18px; }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end;
+                   margin-top: 22px; }
+
+  /* Account-list inside Array modal */
+  .acct-list { display: flex; flex-direction: column; gap: 8px;
+               margin: 10px 0 4px; }
+  .acct-row { display: grid;
+              grid-template-columns: 1.3fr 1fr 1fr auto;
+              gap: 6px; align-items: center; }
+  .acct-row select, .acct-row input { padding: 8px 10px; font-size: 13px; }
+  .acct-remove { background: transparent; border: 1px solid #f0c0b8;
+                 color: #7a2818; border-radius: 4px; padding: 6px 10px;
+                 font-size: 11px; font-weight: 600; cursor: pointer; }
+  .acct-remove:hover { background: #fdf0ed; }
+  .acct-add-link { background: transparent; border: 1px dashed #557060;
+                   color: #557060; border-radius: 6px; padding: 7px 10px;
+                   font-size: 12px; font-weight: 600; cursor: pointer;
+                   width: 100%; margin-top: 4px; }
+  .acct-add-link:hover { background: #eef3ec; color: #2e6b3a;
+                         border-color: #2e6b3a; }
+  .provider-status { font-size: 10px; padding: 1px 6px; border-radius: 3px;
+                     font-weight: 700; text-transform: uppercase;
+                     letter-spacing: 0.3px; vertical-align: middle;
+                     margin-left: 6px; }
+  .provider-status-live { background: #d6efdc; color: #1f4e2a; }
+  .provider-status-in-progress { background: #fff4d6; color: #7a5818; }
+  .provider-status-manual { background: #e4eaf3; color: #2a3f6b; }
+
+  /* Sign-in view */
+  .signin-card { background: white; border-radius: 12px;
+                 padding: 40px 40px; max-width: 460px; margin: 60px auto;
+                 box-shadow: 0 1px 4px rgba(0,0,0,0.06); text-align: center; }
+  .signin-card h1 { font-size: 24px; margin: 0 0 8px; color: #2e6b3a; text-align: center; }
+  .signin-card p { color: #4a5a4f; margin: 0 0 24px; }
+
+  .hide { display: none !important; }
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <a href="index.html">← Solar Operator</a>
+  <span class="signout hide" id="signout-link">Sign out</span>
+</div>
+
+<!-- ─── Signed-out view (request magic link) ─── -->
+<div id="signin-view">
+  <div class="signin-card">
+    <h1>Sign in to your account</h1>
+    <p>Enter your email and we'll send you a one-time sign-in link.</p>
+    <form id="signin-form">
+      <input id="signin-email" type="email" required autocomplete="email" placeholder="you@yourcompany.com">
+      <div class="err" id="signin-err"></div>
+      <div class="ok" id="signin-ok"></div>
+      <button class="btn btn-block" type="submit" id="signin-btn">Email me a sign-in link</button>
+    </form>
+    <p style="font-size:13px;color:#888;margin-top:24px;">
+      No account yet? <a href="signup.html" style="color:#2e6b3a;font-weight:600;">Sign up here</a>
+    </p>
+  </div>
+</div>
+
+<!-- ─── Signed-in view ─── -->
+<div id="account-view" class="hide">
+  <div class="wrap">
+    <h1>My account</h1>
+    <p class="sub" id="acct-greeting">…</p>
+
+    <div class="ok" id="global-ok"></div>
+    <div class="err" id="global-err"></div>
+
+    <div class="card">
+      <h2>Subscription</h2>
+      <div class="stat"><span class="label">Plan</span><span class="val" id="s-plan">—</span></div>
+      <div class="stat"><span class="label">Status</span><span class="val" id="s-status">—</span></div>
+      <div class="stat"><span class="label">Member since</span><span class="val" id="s-since">—</span></div>
+      <div class="stat"><span class="label">Last report sent</span><span class="val" id="s-last-delivery">—</span></div>
+      <button class="btn btn-secondary btn-block" id="portal-btn" type="button">
+        Manage billing &amp; payment method →
+      </button>
+      <p style="font-size:12px;color:#888;margin:10px 0 0;">
+        Opens Stripe's secure billing portal. You can update your card,
+        download invoices, or cancel from there.
+      </p>
+    </div>
+
+    <div class="card">
+      <h2>Data pipeline</h2>
+      <div class="stat"><span class="label">Utility accounts on file</span><span class="val" id="s-accounts">—</span></div>
+      <div class="stat"><span class="label">Bills collected</span><span class="val" id="s-bills">—</span></div>
+      <div class="stat"><span class="label">Last bill pull</span><span class="val" id="s-last-pull">—</span></div>
+      <div class="stat"><span class="label">GMP session expires</span><span class="val" id="s-session-exp">—</span></div>
+      <button class="btn btn-block" id="send-report-btn" type="button">
+        Send all my client reports now
+      </button>
+    </div>
+
+    <div class="card">
+      <h2>Clients</h2>
+      <p style="font-size:13px;color:#667;margin:-8px 0 14px;">
+        Each client gets their own NEPOOL-GIS workbook delivered to their
+        own email on the cadence you set below. Add one client per reporting
+        relationship (a customer of yours).
+      </p>
+      <div id="client-list" class="client-list"></div>
+      <div id="client-empty" class="clients-empty hide">
+        No clients yet. Add your first one below — they'll receive their own
+        per-client report on the cadence you choose.
+      </div>
+      <button class="btn btn-block" id="add-client-btn" type="button">
+        + Add a new client
+      </button>
+    </div>
+
+    <div class="card">
+      <h2>Preferences</h2>
+
+      <label for="freq">Report frequency</label>
+      <div class="row">
+        <div>
+          <select id="freq">
+            <option value="weekly">Weekly (Mondays)</option>
+            <option value="monthly">Monthly (1st of month)</option>
+            <option value="quarterly">Quarterly (Jan / Apr / Jul / Oct)</option>
+          </select>
+        </div>
+        <button class="btn" id="save-freq" type="button">Save</button>
+      </div>
+
+      <label for="email" style="margin-top:18px;">Email address</label>
+      <div class="row">
+        <div>
+          <input id="email" type="email" autocomplete="email">
+        </div>
+        <button class="btn" id="save-email" type="button">Save</button>
+      </div>
+      <p style="font-size:12px;color:#888;margin:8px 0 0;">
+        This is where we send your monthly reports and account notices.
+        Stripe receipts go here too.
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<!-- ─── Client editor modal ─── -->
+<div class="modal-bg" id="client-modal">
+  <div class="modal">
+    <h3 id="client-modal-title">Add a client</h3>
+    <p class="modal-sub" id="client-modal-sub">
+      Each client receives their own per-client report. Their email and
+      cadence can differ from yours.
+    </p>
+
+    <label for="cl-name">Client name</label>
+    <input id="cl-name" type="text" placeholder="e.g. Green Mountain Community Solar">
+
+    <label for="cl-email" style="margin-top:12px;">Report recipient email</label>
+    <input id="cl-email" type="email" placeholder="who-gets-the-report@example.com">
+
+    <label for="cl-cc" style="margin-top:12px;">CC additional recipients (optional)</label>
+    <input id="cl-cc" type="text" placeholder="finance@example.com, ops@example.com">
+    <p style="font-size:11px;color:#888;margin:6px 0 0;">
+      Comma-separated. Each address receives its own copy.
+    </p>
+
+    <label for="cl-freq" style="margin-top:12px;">Report frequency</label>
+    <select id="cl-freq">
+      <option value="">Inherit account default</option>
+      <option value="weekly">Weekly (Mondays)</option>
+      <option value="monthly">Monthly (1st of month)</option>
+      <option value="quarterly">Quarterly (Jan / Apr / Jul / Oct)</option>
+    </select>
+
+    <label for="cl-notes" style="margin-top:12px;">Notes (internal — for your reference)</label>
+    <input id="cl-notes" type="text" placeholder="e.g. main contact for billing">
+
+    <div class="err" id="cl-err"></div>
+
+    <div class="modal-actions">
+      <button class="iconbtn" id="cl-cancel" type="button">Cancel</button>
+      <button class="btn" id="cl-save" type="button">Save client</button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── Array editor modal ─── -->
+<div class="modal-bg" id="array-modal">
+  <div class="modal">
+    <h3 id="array-modal-title">Add an array</h3>
+    <p class="modal-sub" id="array-modal-sub">
+      A solar array is one physical installation. It can be powered by one
+      or more utility logins (e.g. an array split across multiple GMP
+      account numbers).
+    </p>
+
+    <label for="ar-name">Array name</label>
+    <input id="ar-name" type="text" placeholder="e.g. Chester">
+
+    <label for="ar-nepool" style="margin-top:12px;">NEPOOL-GIS asset ID (optional)</label>
+    <input id="ar-nepool" type="text" placeholder="e.g. 53984">
+    <p style="font-size:11px;color:#888;margin:4px 0 0;">
+      Shows up in the workbook title as "Chester (53984)". Leave blank if unknown.
+    </p>
+
+    <label for="ar-region" style="margin-top:12px;">Town / region (optional)</label>
+    <input id="ar-region" type="text" placeholder="e.g. Chester, VT">
+
+    <label for="ar-offset" style="margin-top:12px;">Billing-month convention</label>
+    <select id="ar-offset">
+      <option value="1">Bill = prior month (most utilities)</option>
+      <option value="0">Bill = same month (e.g. Bruce's Starlake)</option>
+    </select>
+    <p style="font-size:11px;color:#888;margin:4px 0 0;">
+      Whether the bill we read represents the month it was issued, or the
+      month before. GMP is "prior month."
+    </p>
+
+    <label for="ar-notes" style="margin-top:12px;">Notes (internal)</label>
+    <input id="ar-notes" type="text" placeholder="e.g. ground-mount, 250kW">
+
+    <div style="margin-top:18px;border-top:1px solid #e4e8e2;padding-top:14px;">
+      <div style="font-weight:700;color:#2e6b3a;font-size:14px;margin-bottom:4px;">
+        Data sources for this array
+      </div>
+      <p style="font-size:12px;color:#667;margin:0 0 10px;">
+        Add one row per utility account that powers this array. We pull
+        generation data from each source and sum them in the report.
+      </p>
+      <div class="acct-list" id="acct-list"></div>
+      <button class="acct-add-link" id="acct-add" type="button">
+        + Add another utility account
+      </button>
+    </div>
+
+    <div class="err" id="ar-err"></div>
+
+    <div class="modal-actions">
+      <button class="iconbtn" id="ar-cancel" type="button">Cancel</button>
+      <button class="btn" id="ar-save" type="button">Save array</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const API_BASE = "https://web-production-49c83.up.railway.app";
+const SESSION_KEY = "so_session_token";
+
+function $(id) { return document.getElementById(id); }
+function show(el) { el.classList.remove("hide"); }
+function hide(el) { el.classList.add("hide"); }
+
+function flash(el, msg, kind) {
+  el.textContent = msg;
+  el.style.display = "block";
+  if (kind === "ok") setTimeout(() => el.style.display = "none", 4000);
+}
+
+async function api(path, opts = {}) {
+  const headers = opts.headers || {};
+  headers["Content-Type"] = "application/json";
+  const token = localStorage.getItem(SESSION_KEY);
+  if (token) headers["Authorization"] = "Bearer " + token;
+  const res = await fetch(API_BASE + path, { ...opts, headers });
+  if (res.status === 401) {
+    localStorage.removeItem(SESSION_KEY);
+    location.href = "account.html";
+    throw new Error("Session expired");
+  }
+  if (!res.ok) {
+    let msg = "HTTP " + res.status;
+    try { const j = await res.json(); msg = j.detail || j.message || msg; } catch {}
+    throw new Error(msg);
+  }
+  return res.json();
+}
+
+// ─── Magic-link flow ────────────────────────────────────────────────
+
+async function handleVerifyTokenFromURL() {
+  const params = new URLSearchParams(location.search);
+  const token = params.get("token");
+  if (!token) return false;
+  try {
+    const data = await fetch(API_BASE + "/v1/auth/verify", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({token}),
+    }).then(r => r.json().then(j => { if (!r.ok) throw new Error(j.detail || "Sign-in link invalid"); return j; }));
+    localStorage.setItem(SESSION_KEY, data.session_token);
+    history.replaceState({}, "", "account.html");
+    return true;
+  } catch (e) {
+    flash($("signin-err"), "Sign-in link expired or already used. Request a new one below.", "err");
+    return false;
+  }
+}
+
+$("signin-form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const email = $("signin-email").value.trim();
+  const btn = $("signin-btn");
+  btn.disabled = true; btn.textContent = "Sending…";
+  $("signin-err").style.display = "none";
+  $("signin-ok").style.display = "none";
+  try {
+    await fetch(API_BASE + "/v1/auth/request", {
+      method: "POST",
+      headers: {"Content-Type": "application/json"},
+      body: JSON.stringify({email}),
+    });
+    flash($("signin-ok"), "Check your email for a sign-in link (good for 15 minutes).", "ok");
+  } catch (err) {
+    flash($("signin-err"), "Could not send: " + err.message, "err");
+  } finally {
+    btn.disabled = false; btn.textContent = "Email me a sign-in link";
+  }
+});
+
+// ─── Signed-in view ─────────────────────────────────────────────────
+
+async function loadAccount() {
+  try {
+    const me = await api("/v1/account");
+    show($("account-view"));
+    hide($("signin-view"));
+    show($("signout-link"));
+
+    $("acct-greeting").textContent = `Welcome back, ${me.name.split(" ")[0]}.`;
+    $("s-plan").textContent = labelForPlan(me.plan);
+    const statusEl = $("s-status");
+    const status = me.subscription_status || (me.active ? "active" : "inactive");
+    statusEl.innerHTML = `<span class="badge badge-${status}">${status}</span>`;
+    $("s-since").textContent = fmtDate(me.created_at);
+    $("s-last-delivery").textContent = me.last_delivery_at ? fmtDate(me.last_delivery_at) : "Never";
+    $("s-accounts").textContent = me.accounts_count;
+    $("s-bills").textContent = me.bills_count;
+    $("s-last-pull").textContent = me.last_pull_at ? fmtDate(me.last_pull_at) : "Pending";
+    $("s-session-exp").textContent = me.session && me.session.expires_at
+      ? fmtDate(me.session.expires_at)
+      : "No GMP session yet — install the Chrome extension and sign into GMP";
+
+    $("freq").value = me.report_frequency || "monthly";
+    $("email").value = me.email || "";
+  } catch (e) {
+    flash($("signin-err"), "Sign in to continue.", "err");
+    show($("signin-view"));
+  }
+}
+
+function labelForPlan(p) {
+  if (p === "comped") return "Solar Operator (comped)";
+  if (p === "standard") return "Solar Operator · $75/mo";
+  return p;
+}
+
+function fmtDate(iso) {
+  try {
+    const d = new Date(iso);
+    return d.toLocaleString(undefined, {dateStyle: "medium", timeStyle: "short"});
+  } catch { return iso; }
+}
+
+$("signout-link").addEventListener("click", () => {
+  localStorage.removeItem(SESSION_KEY);
+  location.href = "account.html";
+});
+
+$("portal-btn").addEventListener("click", async () => {
+  try {
+    const r = await api("/v1/account/billing-portal");
+    location.href = r.url;
+  } catch (e) {
+    flash($("global-err"), e.message, "err");
+  }
+});
+
+$("send-report-btn").addEventListener("click", async () => {
+  const btn = $("send-report-btn");
+  btn.disabled = true; btn.textContent = "Sending…";
+  try {
+    const r = await api("/v1/account/send-report", {method: "POST"});
+    const delivered = r.delivered ?? (r.email_sent ? 1 : 0);
+    const total = r.client_count ?? 1;
+    if (delivered > 0) {
+      const where = (r.results && r.results.length)
+        ? r.results.filter(x => x.ok).map(x => x.recipients?.[0] || "").filter(Boolean).join(", ")
+        : (r.recipient || "your inbox");
+      flash($("global-ok"),
+        `Sent ${delivered} of ${total} client report(s). Recipients: ${where}`,
+        "ok");
+      loadAccount();
+      loadClients();
+    } else {
+      flash($("global-err"), "Could not send: " + (r.reason || "no clients configured yet"), "err");
+    }
+  } catch (e) {
+    flash($("global-err"), e.message, "err");
+  } finally {
+    btn.disabled = false; btn.textContent = "Send all my client reports now";
+  }
+});
+
+$("save-freq").addEventListener("click", async () => {
+  try {
+    await api("/v1/account/frequency", {method: "POST", body: JSON.stringify({frequency: $("freq").value})});
+    flash($("global-ok"), "Report frequency updated.", "ok");
+  } catch (e) { flash($("global-err"), e.message, "err"); }
+});
+
+$("save-email").addEventListener("click", async () => {
+  const email = $("email").value.trim();
+  if (!email) { flash($("global-err"), "Email cannot be empty", "err"); return; }
+  try {
+    await api("/v1/account/email", {method: "POST", body: JSON.stringify({email})});
+    flash($("global-ok"), "Email updated.", "ok");
+  } catch (e) { flash($("global-err"), e.message, "err"); }
+});
+
+// ─── Clients (sub-clients) ─────────────────────────────────────────
+
+let CLIENTS_CACHE = [];
+let PROVIDERS_CACHE = [];
+let ARRAYS_CACHE = {};       // client_id -> array list
+let OPEN_CLIENT_IDS = new Set();   // which client rows are expanded
+let EDITING_CLIENT_ID = null;
+let EDITING_ARRAY_CTX = null;      // {client_id, array_id|null, draft_accounts: []}
+
+function escapeHTML(s) {
+  return String(s ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"
+  })[c]);
+}
+
+async function ensureProviders() {
+  if (PROVIDERS_CACHE.length) return PROVIDERS_CACHE;
+  try {
+    const r = await fetch(API_BASE + "/v1/providers");
+    const j = await r.json();
+    PROVIDERS_CACHE = j.providers || [];
+  } catch (e) { console.warn("provider load failed", e); }
+  return PROVIDERS_CACHE;
+}
+
+async function loadClients() {
+  const listEl = $("client-list");
+  const emptyEl = $("client-empty");
+  try {
+    const r = await api("/v1/account/clients");
+    CLIENTS_CACHE = r.clients || [];
+    await ensureProviders();
+    listEl.innerHTML = "";
+    if (CLIENTS_CACHE.length === 0) {
+      show(emptyEl);
+      return;
+    }
+    hide(emptyEl);
+    for (const c of CLIENTS_CACHE) {
+      const row = document.createElement("div");
+      const open = OPEN_CLIENT_IDS.has(c.id);
+      row.className = "client-row"
+        + (c.active ? "" : " inactive")
+        + (open ? " open" : "");
+      row.dataset.cid = c.id;
+      const last = c.last_delivery_at ? `Last sent ${fmtDate(c.last_delivery_at)}` : "Never sent";
+      const freq = c.report_frequency || "inherits account";
+      row.innerHTML = `
+        <div class="client-header" data-act="toggle" data-id="${c.id}">
+          <span class="chev">▶</span>
+          <div class="client-meta">
+            <div class="client-name">${escapeHTML(c.name)}
+              ${c.active ? "" : '<span class="client-pill client-pill-mut">inactive</span>'}
+              <span class="client-pill">${c.array_count} array${c.array_count===1?"":"s"}</span>
+            </div>
+            <div class="client-sub">
+              ${escapeHTML(c.contact_email || "no email set")}
+              &nbsp;·&nbsp; ${escapeHTML(freq)}
+              &nbsp;·&nbsp; ${last}
+            </div>
+          </div>
+          <div class="client-actions">
+            <button class="iconbtn" data-act="send" data-id="${c.id}">Send report</button>
+            <button class="iconbtn" data-act="edit" data-id="${c.id}">Edit</button>
+            <button class="iconbtn danger" data-act="delete" data-id="${c.id}">${c.active ? "Disable" : "Reactivate"}</button>
+          </div>
+        </div>
+        <div class="client-body">
+          <div class="arrays-title">Arrays under this client</div>
+          <div class="arr-list" data-arr-list="${c.id}">
+            <div class="arrays-empty">Loading…</div>
+          </div>
+          <button class="add-arr-btn" data-act="add-array" data-id="${c.id}">
+            + Add an array for this client
+          </button>
+        </div>`;
+      listEl.appendChild(row);
+      if (open) await loadArraysForClient(c.id);
+    }
+    // Wire delegate clicks
+    listEl.querySelectorAll("[data-act]").forEach(el => {
+      el.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        const id = parseInt(el.dataset.id, 10);
+        const act = el.dataset.act;
+        if (act === "toggle") toggleClient(id);
+        else if (act === "edit") openClientModal(id);
+        else if (act === "send") sendOneClientReport(id, el);
+        else if (act === "delete") deactivateClient(id);
+        else if (act === "add-array") openArrayModal(id, null);
+      });
+    });
+  } catch (e) {
+    flash($("global-err"), "Could not load clients: " + e.message, "err");
+  }
+}
+
+async function toggleClient(clientId) {
+  if (OPEN_CLIENT_IDS.has(clientId)) OPEN_CLIENT_IDS.delete(clientId);
+  else OPEN_CLIENT_IDS.add(clientId);
+  const row = document.querySelector(`.client-row[data-cid="${clientId}"]`);
+  if (!row) return;
+  row.classList.toggle("open");
+  if (OPEN_CLIENT_IDS.has(clientId)) await loadArraysForClient(clientId);
+}
+
+async function loadArraysForClient(clientId) {
+  const listEl = document.querySelector(`[data-arr-list="${clientId}"]`);
+  if (!listEl) return;
+  try {
+    const r = await api(`/v1/account/clients/${clientId}/arrays`);
+    ARRAYS_CACHE[clientId] = r.arrays || [];
+    renderArrayList(clientId);
+  } catch (e) {
+    listEl.innerHTML = `<div class="arrays-empty">Could not load arrays: ${escapeHTML(e.message)}</div>`;
+  }
+}
+
+function renderArrayList(clientId) {
+  const listEl = document.querySelector(`[data-arr-list="${clientId}"]`);
+  if (!listEl) return;
+  const arrs = ARRAYS_CACHE[clientId] || [];
+  if (!arrs.length) {
+    listEl.innerHTML = '<div class="arrays-empty">No arrays yet. Add the first one below.</div>';
+    return;
+  }
+  listEl.innerHTML = arrs.map(a => {
+    const acctsSummary = a.accounts.length
+      ? a.accounts.map(ac =>
+          `${escapeHTML(ac.provider_label)} #${escapeHTML(ac.account_number)}`
+        ).join(" + ")
+      : "<em style=\"color:#aa6\">no data source linked yet</em>";
+    const subBits = [];
+    if (a.nepool_gis_id) subBits.push(`NEPOOL ${escapeHTML(a.nepool_gis_id)}`);
+    if (a.region) subBits.push(escapeHTML(a.region));
+    subBits.push(`${a.accounts.length} data source${a.accounts.length===1?"":"s"}`);
+    return `
+      <div class="arr-row">
+        <div class="arr-meta">
+          <div class="arr-name">${escapeHTML(a.name)}</div>
+          <div class="arr-sub">${subBits.join(" &nbsp;·&nbsp; ")}</div>
+          <div class="arr-accts">${acctsSummary}</div>
+        </div>
+        <div class="arr-actions">
+          <button class="iconbtn" data-arr-act="edit"
+                  data-cid="${clientId}" data-aid="${a.id}">Edit</button>
+          <button class="iconbtn danger" data-arr-act="delete"
+                  data-cid="${clientId}" data-aid="${a.id}">Delete</button>
+        </div>
+      </div>`;
+  }).join("");
+  listEl.querySelectorAll("[data-arr-act]").forEach(b => {
+    b.addEventListener("click", (ev) => {
+      ev.stopPropagation();
+      const cid = parseInt(b.dataset.cid, 10);
+      const aid = parseInt(b.dataset.aid, 10);
+      if (b.dataset.arrAct === "edit") openArrayModal(cid, aid);
+      else if (b.dataset.arrAct === "delete") deleteArray(cid, aid);
+    });
+  });
+}
+
+function openClientModal(clientId = null) {
+  EDITING_CLIENT_ID = clientId;
+  $("cl-err").style.display = "none";
+  if (clientId) {
+    const c = CLIENTS_CACHE.find(x => x.id === clientId);
+    if (!c) return;
+    $("client-modal-title").textContent = "Edit client";
+    $("client-modal-sub").textContent = `Update settings for ${c.name}.`;
+    $("cl-name").value = c.name || "";
+    $("cl-email").value = c.contact_email || "";
+    $("cl-cc").value = c.cc_emails || "";
+    $("cl-freq").value = c.report_frequency || "";
+    $("cl-notes").value = c.notes || "";
+    $("cl-save").textContent = "Save changes";
+  } else {
+    $("client-modal-title").textContent = "Add a client";
+    $("client-modal-sub").textContent =
+      "Each client receives their own per-client report. Their email and cadence can differ from yours.";
+    $("cl-name").value = "";
+    $("cl-email").value = "";
+    $("cl-cc").value = "";
+    $("cl-freq").value = "";
+    $("cl-notes").value = "";
+    $("cl-save").textContent = "Create client";
+  }
+  $("client-modal").classList.add("open");
+  setTimeout(() => $("cl-name").focus(), 30);
+}
+
+function closeClientModal() {
+  $("client-modal").classList.remove("open");
+  EDITING_CLIENT_ID = null;
+}
+
+async function saveClient() {
+  const name = $("cl-name").value.trim();
+  if (!name) { flash($("cl-err"), "Client name is required.", "err"); return; }
+  const body = {
+    name,
+    contact_email: $("cl-email").value.trim() || null,
+    cc_emails: $("cl-cc").value.trim() || null,
+    report_frequency: $("cl-freq").value || null,
+    notes: $("cl-notes").value.trim() || null,
+  };
+  const editing = EDITING_CLIENT_ID !== null;
+  if (editing) {
+    for (const k of Object.keys(body)) if (body[k] === null) delete body[k];
+  }
+  const btn = $("cl-save");
+  btn.disabled = true; btn.textContent = editing ? "Saving…" : "Creating…";
+  try {
+    if (editing) {
+      await api(`/v1/account/clients/${EDITING_CLIENT_ID}`,
+                {method: "PATCH", body: JSON.stringify(body)});
+      flash($("global-ok"), `Client "${name}" updated.`, "ok");
+    } else {
+      await api("/v1/account/clients",
+                {method: "POST", body: JSON.stringify(body)});
+      flash($("global-ok"), `Client "${name}" created.`, "ok");
+    }
+    closeClientModal();
+    await loadClients();
+  } catch (e) {
+    flash($("cl-err"), e.message, "err");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = editing ? "Save changes" : "Create client";
+  }
+}
+
+async function sendOneClientReport(clientId, btn) {
+  const original = btn.textContent;
+  btn.disabled = true; btn.textContent = "Sending…";
+  try {
+    const r = await api(`/v1/account/clients/${clientId}/send-report`,
+                       {method: "POST"});
+    if (r.ok && r.email_sent) {
+      const who = (r.recipients || []).join(", ") || "the client";
+      flash($("global-ok"), `Sent to ${who}.`, "ok");
+      loadClients();
+    } else {
+      flash($("global-err"),
+        "Could not send: " + (r.reason || r.error || "unknown error"), "err");
+    }
+  } catch (e) {
+    flash($("global-err"), e.message, "err");
+  } finally {
+    btn.disabled = false; btn.textContent = original;
+  }
+}
+
+async function deactivateClient(clientId) {
+  const c = CLIENTS_CACHE.find(x => x.id === clientId);
+  if (!c) return;
+  const action = c.active ? "disable" : "reactivate";
+  const confirmed = confirm(
+    c.active
+      ? `Disable client "${c.name}"? They will stop receiving reports until reactivated. Their arrays and history are preserved.`
+      : `Reactivate "${c.name}"?`
+  );
+  if (!confirmed) return;
+  try {
+    if (c.active) {
+      await api(`/v1/account/clients/${clientId}`, {method: "DELETE"});
+    } else {
+      await api(`/v1/account/clients/${clientId}`,
+                {method: "PATCH", body: JSON.stringify({active: true})});
+    }
+    flash($("global-ok"), `Client ${action}d.`, "ok");
+    await loadClients();
+  } catch (e) {
+    flash($("global-err"), e.message, "err");
+  }
+}
+
+// ─── Array modal ────────────────────────────────────────────────────
+
+function providerOptionsHTML(selected = "gmp") {
+  return PROVIDERS_CACHE.map(p => `
+    <option value="${escapeHTML(p.code)}"${p.code === selected ? " selected" : ""}>
+      ${escapeHTML(p.label)} (${p.scrape_status})
+    </option>`).join("");
+}
+
+function renderDraftAccounts() {
+  const list = $("acct-list");
+  if (!EDITING_ARRAY_CTX) return;
+  const drafts = EDITING_ARRAY_CTX.draft_accounts;
+  list.innerHTML = drafts.length === 0
+    ? '<div class="arrays-empty">No data source yet — add one below.</div>'
+    : "";
+  drafts.forEach((d, i) => {
+    const row = document.createElement("div");
+    row.className = "acct-row";
+    row.innerHTML = `
+      <select data-draft-idx="${i}" data-k="provider">${providerOptionsHTML(d.provider)}</select>
+      <input data-draft-idx="${i}" data-k="account_number" placeholder="Account number"
+             value="${escapeHTML(d.account_number || "")}">
+      <input data-draft-idx="${i}" data-k="nickname" placeholder="Nickname (optional)"
+             value="${escapeHTML(d.nickname || "")}">
+      <button class="acct-remove" data-draft-idx="${i}" data-k="remove" type="button">×</button>`;
+    list.appendChild(row);
+  });
+  list.querySelectorAll("[data-draft-idx]").forEach(el => {
+    el.addEventListener("input", () => {
+      const i = parseInt(el.dataset.draftIdx, 10);
+      const k = el.dataset.k;
+      if (k === "remove") return;
+      EDITING_ARRAY_CTX.draft_accounts[i][k] = el.value;
+    });
+    if (el.dataset.k === "remove") {
+      el.addEventListener("click", () => {
+        const i = parseInt(el.dataset.draftIdx, 10);
+        EDITING_ARRAY_CTX.draft_accounts.splice(i, 1);
+        renderDraftAccounts();
+      });
+    }
+  });
+}
+
+async function openArrayModal(clientId, arrayId) {
+  await ensureProviders();
+  $("ar-err").style.display = "none";
+
+  if (arrayId) {
+    const a = (ARRAYS_CACHE[clientId] || []).find(x => x.id === arrayId);
+    if (!a) return;
+    EDITING_ARRAY_CTX = {
+      client_id: clientId, array_id: arrayId,
+      draft_accounts: a.accounts.map(ac => ({
+        // Existing accounts ARE saved; we only allow new additions via this
+        // modal. The X removes them via the API.
+        existing_id: ac.id,
+        provider: ac.provider, account_number: ac.account_number,
+        nickname: ac.nickname,
+      })),
+    };
+    $("array-modal-title").textContent = `Edit ${a.name}`;
+    $("array-modal-sub").textContent =
+      "Update the array's properties and its data sources.";
+    $("ar-name").value = a.name || "";
+    $("ar-nepool").value = a.nepool_gis_id || "";
+    $("ar-region").value = a.region || "";
+    $("ar-offset").value = String(a.bill_offset_months ?? 1);
+    $("ar-notes").value = a.notes || "";
+    $("ar-save").textContent = "Save changes";
+  } else {
+    EDITING_ARRAY_CTX = {
+      client_id: clientId, array_id: null,
+      draft_accounts: [
+        {provider:"gmp", account_number:"", nickname:""},
+      ],
+    };
+    $("array-modal-title").textContent = "Add an array";
+    $("array-modal-sub").textContent =
+      "A solar array is one physical installation. It can be powered by one or more utility logins.";
+    $("ar-name").value = "";
+    $("ar-nepool").value = "";
+    $("ar-region").value = "";
+    $("ar-offset").value = "1";
+    $("ar-notes").value = "";
+    $("ar-save").textContent = "Create array";
+  }
+  renderDraftAccounts();
+  $("array-modal").classList.add("open");
+  setTimeout(() => $("ar-name").focus(), 30);
+}
+
+function closeArrayModal() {
+  $("array-modal").classList.remove("open");
+  EDITING_ARRAY_CTX = null;
+}
+
+async function saveArray() {
+  if (!EDITING_ARRAY_CTX) return;
+  const ctx = EDITING_ARRAY_CTX;
+  const name = $("ar-name").value.trim();
+  if (!name) { flash($("ar-err"), "Array name is required.", "err"); return; }
+  const offset = parseInt($("ar-offset").value, 10);
+  const notes = $("ar-notes").value.trim() || null;
+  const nepool = $("ar-nepool").value.trim() || null;
+  const region = $("ar-region").value.trim() || null;
+
+  // Validate drafts: require account_number for any row with a provider
+  for (const d of ctx.draft_accounts) {
+    if (!d.account_number || !d.account_number.trim()) {
+      flash($("ar-err"),
+        "Each utility account row needs an account number (or remove it).", "err");
+      return;
+    }
+  }
+
+  const btn = $("ar-save");
+  btn.disabled = true; btn.textContent = ctx.array_id ? "Saving…" : "Creating…";
+  try {
+    if (ctx.array_id) {
+      // Edit: PATCH metadata
+      const patch = {name, bill_offset_months: offset};
+      // null-vs-not-provided: only send fields the user can clear safely
+      if (nepool !== null) patch.nepool_gis_id = nepool;
+      if (region !== null) patch.region = region;
+      if (notes !== null) patch.notes = notes;
+      await api(`/v1/account/clients/${ctx.client_id}/arrays/${ctx.array_id}`,
+        {method: "PATCH", body: JSON.stringify(patch)});
+
+      // For each new draft (no existing_id) → POST add account
+      const existingIds = new Set(
+        (ARRAYS_CACHE[ctx.client_id]?.find(a => a.id === ctx.array_id)?.accounts || [])
+          .map(ac => ac.id)
+      );
+      const remainingExistingIds = new Set(
+        ctx.draft_accounts.filter(d => d.existing_id).map(d => d.existing_id)
+      );
+      // Removed = in existingIds but not in remainingExistingIds
+      for (const oldId of existingIds) {
+        if (!remainingExistingIds.has(oldId)) {
+          await api(
+            `/v1/account/clients/${ctx.client_id}/arrays/${ctx.array_id}/accounts/${oldId}`,
+            {method: "DELETE"});
+        }
+      }
+      // Added = drafts without existing_id
+      for (const d of ctx.draft_accounts) {
+        if (d.existing_id) continue;
+        await api(
+          `/v1/account/clients/${ctx.client_id}/arrays/${ctx.array_id}/accounts`,
+          {method: "POST", body: JSON.stringify({
+            provider: d.provider, account_number: d.account_number.trim(),
+            nickname: (d.nickname || name).trim(),
+          })});
+      }
+      flash($("global-ok"), `Array "${name}" updated.`, "ok");
+    } else {
+      // Create
+      const body = {
+        name, nepool_gis_id: nepool, region, bill_offset_months: offset,
+        notes,
+        accounts: ctx.draft_accounts.map(d => ({
+          provider: d.provider,
+          account_number: d.account_number.trim(),
+          nickname: (d.nickname || name).trim(),
+        })),
+      };
+      await api(`/v1/account/clients/${ctx.client_id}/arrays`,
+        {method: "POST", body: JSON.stringify(body)});
+      flash($("global-ok"), `Array "${name}" created.`, "ok");
+    }
+    closeArrayModal();
+    await loadArraysForClient(ctx.client_id);
+    await loadClients();   // refresh array_count badges
+  } catch (e) {
+    flash($("ar-err"), e.message, "err");
+  } finally {
+    btn.disabled = false;
+    btn.textContent = ctx.array_id ? "Save changes" : "Create array";
+  }
+}
+
+async function deleteArray(clientId, arrayId) {
+  const a = (ARRAYS_CACHE[clientId] || []).find(x => x.id === arrayId);
+  if (!a) return;
+  if (!confirm(`Delete array "${a.name}"? This permanently removes the array and any bills tied to it. No undo.`)) return;
+  try {
+    await api(`/v1/account/clients/${clientId}/arrays/${arrayId}`,
+              {method: "DELETE"});
+    flash($("global-ok"), `Array "${a.name}" deleted.`, "ok");
+    await loadArraysForClient(clientId);
+    await loadClients();
+  } catch (e) {
+    flash($("global-err"), e.message, "err");
+  }
+}
+
+$("add-client-btn").addEventListener("click", () => openClientModal(null));
+$("cl-cancel").addEventListener("click", closeClientModal);
+$("cl-save").addEventListener("click", saveClient);
+$("client-modal").addEventListener("click", (ev) => {
+  if (ev.target.id === "client-modal") closeClientModal();
+});
+
+$("ar-cancel").addEventListener("click", closeArrayModal);
+$("ar-save").addEventListener("click", saveArray);
+$("array-modal").addEventListener("click", (ev) => {
+  if (ev.target.id === "array-modal") closeArrayModal();
+});
+$("acct-add").addEventListener("click", () => {
+  if (!EDITING_ARRAY_CTX) return;
+  EDITING_ARRAY_CTX.draft_accounts.push(
+    {provider:"gmp", account_number:"", nickname:""});
+  renderDraftAccounts();
+});
+
+document.addEventListener("keydown", (ev) => {
+  if (ev.key !== "Escape") return;
+  if ($("array-modal").classList.contains("open")) closeArrayModal();
+  else if ($("client-modal").classList.contains("open")) closeClientModal();
+});
+
+// ─── boot ──────────────────────────────────────────────────────────
+
+(async () => {
+  const verified = await handleVerifyTokenFromURL();
+  const tok = localStorage.getItem(SESSION_KEY);
+  if (tok || verified) {
+    await loadAccount();
+    await loadClients();
+  } else {
+    show($("signin-view"));
+  }
+})();
+</script>
+</body>
+</html>

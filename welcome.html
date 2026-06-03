@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>You're in — Solar Operator</title>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="shortcut icon" href="favicon.ico">
+<link rel="apple-touch-icon" sizes="256x256" href="favicon-256.png">
+<meta name="theme-color" content="#2e6b3a">
+<style>
+  body { font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+         max-width: 640px; margin: 0 auto; padding: 56px 24px;
+         color: #1a2a1f; line-height: 1.6; background: #fafaf7; }
+  .card { background: white; border-radius: 12px; padding: 44px 40px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+  .check { width: 64px; height: 64px; border-radius: 50%;
+           background: #2e6b3a; color: white; font-size: 36px;
+           display: flex; align-items: center; justify-content: center;
+           margin: 0 auto 24px; }
+  h1 { color: #2e6b3a; font-size: 28px; margin: 0 0 8px; text-align: center; }
+  .sub { color: #4a5a4f; font-size: 16px; margin: 0 0 32px; text-align: center; }
+  .code-box { background: #eef3ec; border: 2px dashed #2e6b3a;
+              border-radius: 10px; padding: 22px 24px; margin: 28px 0; }
+  .code-label { font-size: 11px; letter-spacing: 1px; text-transform: uppercase;
+                color: #557060; font-weight: 700; margin-bottom: 10px; }
+  .code-value { font-family: ui-monospace, Menlo, Consolas, monospace;
+                font-size: 16px; font-weight: 700; color: #1f4e2a;
+                word-break: break-all; }
+  .copy-btn { display: inline-block; margin-top: 12px; background: white;
+              border: 1px solid #2e6b3a; color: #2e6b3a; padding: 7px 14px;
+              border-radius: 5px; font-size: 13px; cursor: pointer; font-weight: 600; }
+  .copy-btn:hover { background: #2e6b3a; color: white; }
+  .step { display: flex; gap: 14px; align-items: flex-start; margin: 18px 0;
+          padding: 14px 16px; background: #fafaf7; border-radius: 8px; }
+  .step-num { flex-shrink: 0; width: 30px; height: 30px;
+              border-radius: 50%; background: #2e6b3a; color: white;
+              display: flex; align-items: center; justify-content: center;
+              font-weight: 700; font-size: 14px; }
+  .step-body { flex: 1; }
+  .step-body strong { display: block; margin-bottom: 4px; }
+  .btn { display: inline-block; background: #2e6b3a; color: white;
+         padding: 10px 18px; border-radius: 6px; text-decoration: none;
+         font-weight: 600; font-size: 14px; margin-top: 6px; }
+  .btn:hover { background: #245029; }
+  .footer { background: #fff4d6; padding: 16px 20px; border-radius: 8px;
+            font-size: 14px; margin-top: 28px; }
+  .error { background: #fde2e2; border: 1px solid #d9534f; color: #8b1f1f;
+           padding: 14px 18px; border-radius: 8px; margin: 24px 0; }
+  .loading { text-align: center; color: #888; padding: 24px; }
+  a { color: #2e6b3a; }
+  #content { display: none; }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="check">✓</div>
+  <h1>You're in.</h1>
+  <p class="sub">Payment received. Welcome to Solar Operator.</p>
+
+  <div id="loading" class="loading">Loading your activation code…</div>
+
+  <div id="error" style="display:none;"></div>
+
+  <div id="content">
+    <div class="code-box">
+      <div class="code-label">Your activation code</div>
+      <div class="code-value" id="code">—</div>
+      <button class="copy-btn" id="copy-btn" onclick="copyCode()">Copy code</button>
+    </div>
+
+    <p style="margin-top:32px;"><strong>Set up in 3 steps (≈3 min):</strong></p>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <strong>Install the Chrome extension</strong>
+        <a class="btn" target="_blank"
+           href="https://chromewebstore.google.com/detail/solar-operator-sync/ocohbimolfpnkjcjhiodopjjlhclinpl">
+          Add Solar Operator Sync to Chrome
+        </a>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <strong>Paste your activation code</strong>
+        Click the Solar Operator icon in Chrome's toolbar, paste the code above, hit Save.
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <strong>Sign into Green Mountain Power once</strong>
+        Visit <a href="https://greenmountainpower.com" target="_blank">greenmountainpower.com</a>,
+        log in, check "Stay signed in." Close the tab. You're done.
+      </div>
+    </div>
+
+    </div>
+
+    <div class="footer">
+      Questions? Just email
+      <a href="mailto:support@solaroperator.org">support@solaroperator.org</a>
+      — same business day response, no auto-replies.
+    </div>
+
+    <p style="margin-top:24px;color:#888;font-size:13px;text-align:center;">
+      Save this code somewhere safe — you'll need it again only if you reinstall the extension.
+    </p>
+  </div>
+</div>
+
+<script>
+  const API_BASE = "https://web-production-49c83.up.railway.app";
+
+  function getQueryParam(name) {
+    const params = new URLSearchParams(window.location.search);
+    return params.get(name);
+  }
+
+  function showError(msg) {
+    document.getElementById("loading").style.display = "none";
+    const err = document.getElementById("error");
+    err.className = "error";
+    err.style.display = "block";
+    err.innerHTML = msg;
+  }
+
+  function copyCode() {
+    const code = document.getElementById("code").textContent;
+    navigator.clipboard.writeText(code).then(() => {
+      const btn = document.getElementById("copy-btn");
+      const orig = btn.textContent;
+      btn.textContent = "Copied ✓";
+      setTimeout(() => btn.textContent = orig, 1800);
+    });
+  }
+
+  async function loadActivation() {
+    const sessionId = getQueryParam("session_id");
+    if (!sessionId) {
+      showError("Missing session id. If you just paid and got redirected here, " +
+        "contact <a href='mailto:support@solaroperator.org'>support@solaroperator.org</a> " +
+        "and we'll get your activation code right over.");
+      return;
+    }
+
+    try {
+      const res = await fetch(`${API_BASE}/v1/checkout/${sessionId}`);
+      if (res.status === 402) {
+        // Payment still processing — retry once after a couple seconds
+        await new Promise(r => setTimeout(r, 2500));
+        const retry = await fetch(`${API_BASE}/v1/checkout/${sessionId}`);
+        if (!retry.ok) throw new Error("Payment still confirming. Refresh in a few seconds.");
+        return showActivation(await retry.json());
+      }
+      if (!res.ok) {
+        const body = await res.text();
+        throw new Error(body || `HTTP ${res.status}`);
+      }
+      showActivation(await res.json());
+    } catch (e) {
+      showError("Couldn't load your activation code: " + e.message +
+        "<br><br>Please contact <a href='mailto:support@solaroperator.org'>support@solaroperator.org</a> " +
+        "with your payment confirmation and we'll send your activation code right over.");
+    }
+  }
+
+  function showActivation(data) {
+    document.getElementById("loading").style.display = "none";
+    document.getElementById("content").style.display = "block";
+    document.getElementById("code").textContent = data.tenant_key;
+  }
+
+
+  loadActivation();
+</script>
+</body>
+</html>
