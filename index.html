@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Solar Operator — Quarterly solar reports, automated.</title>
-<meta name="description" content="Pull GMP bills, generate NEPOOL-format Excel reports, and email them to your clients every quarter — on autopilot. Built for Vermont community solar operators.">
+<meta name="description" content="Pull GMP bills, generate NEPOOL-format Excel reports, and email them to your clients every quarter — on autopilot. Built for the consultants who serve Vermont's community solar operators.">
 <meta name="theme-color" content="#10b981">
 
 <!-- Open Graph -->
@@ -29,18 +29,24 @@
 
 <style>
   :root {
-    --color-bg: #ffffff;
-    --color-fg: #18181b;            /* zinc-900 */
-    --color-muted: #71717a;         /* zinc-500 */
-    --color-subtle: #52525b;        /* zinc-600 */
-    --color-border: #e4e4e7;        /* zinc-200 */
-    --color-card-bg: #fafafa;       /* zinc-50  */
-    --color-primary: #10b981;       /* emerald-500 */
-    --color-primary-hover: #059669; /* emerald-600 */
-    --color-primary-active: #047857;/* emerald-700 */
-    --radius: 12px;
-    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
-    --shadow-card: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+    /* ── Solarpunk-pastoral palette ──────────────────────── */
+    --bg: #F4F1E4;                 /* warm cream — NOT pure white */
+    --bg-card: #FFFFFF;            /* pure white only for elevated cards */
+    --fg: #2A2520;                 /* warm dark brown */
+    --fg-muted: #6B5E55;           /* warm muted */
+    --border: #E5DDD0;             /* warm border */
+    --primary: #10b981;            /* emerald */
+    --primary-hover: #059669;
+    --primary-active: #047857;
+    --accent-lavender: #8B7BB8;
+    --accent-canola: #E8C547;
+    --accent-wood: #8B6F47;
+    --sky-top: #3FA8D8;
+    --sky-bottom: #B8DCEE;
+    --radius: 14px;
+    --radius-card: 18px;
+    --shadow-soft: 0 4px 24px rgba(74, 66, 56, 0.08);
+    --shadow-lift: 0 10px 40px rgba(74, 66, 56, 0.12);
     --font: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   }
 
@@ -49,8 +55,8 @@
   body {
     margin: 0;
     font-family: var(--font);
-    background: var(--color-bg);
-    color: var(--color-fg);
+    background: var(--bg);
+    color: var(--fg);
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
   }
@@ -60,7 +66,7 @@
   a:focus-visible,
   button:focus-visible,
   summary:focus-visible {
-    outline: 2px solid var(--color-primary);
+    outline: 2px solid var(--primary);
     outline-offset: 2px;
     border-radius: 4px;
   }
@@ -70,85 +76,123 @@
   /* ── Nav ───────────────────────────────────────────────── */
   .nav {
     position: sticky; top: 0; z-index: 50;
-    background: rgba(255,255,255,0.92);
-    backdrop-filter: saturate(180%) blur(8px);
-    border-bottom: 1px solid var(--color-border);
+    background: rgba(244, 241, 228, 0.85);
+    backdrop-filter: saturate(160%) blur(10px);
+    -webkit-backdrop-filter: saturate(160%) blur(10px);
+    border-bottom: 1px solid var(--border);
   }
   .nav-inner {
     display: flex; align-items: center; justify-content: space-between;
     height: 64px;
   }
-  .wordmark { font-weight: 600; font-size: 17px; letter-spacing: -0.01em; text-decoration: none; }
+  .wordmark { font-weight: 600; font-size: 17px; letter-spacing: -0.01em; text-decoration: none; color: var(--fg); }
   .nav-link {
-    font-size: 14px; font-weight: 500; color: var(--color-subtle);
+    font-size: 14px; font-weight: 500; color: var(--fg-muted);
     text-decoration: none; padding: 8px 14px; border-radius: 8px;
     transition: color 150ms, background 150ms;
   }
-  .nav-link:hover { color: var(--color-fg); background: var(--color-card-bg); }
+  .nav-link:hover { color: var(--fg); background: rgba(139, 111, 71, 0.08); }
 
   /* ── Buttons ───────────────────────────────────────────── */
   .btn-primary {
     display: inline-block; text-decoration: none;
-    background: var(--color-primary); color: #fff;
-    font-weight: 500; font-size: 16px;
+    background: var(--primary); color: #fff;
+    font-weight: 600; font-size: 16px;
     padding: 14px 28px; border-radius: var(--radius);
-    transition: background 150ms, transform 150ms;
+    box-shadow: var(--shadow-soft);
+    transition: background 150ms, transform 150ms, box-shadow 150ms;
   }
-  .btn-primary:hover { background: var(--color-primary-hover); }
-  .btn-primary:active { background: var(--color-primary-active); transform: translateY(1px); }
+  .btn-primary:hover { background: var(--primary-hover); box-shadow: var(--shadow-lift); }
+  .btn-primary:active { background: var(--primary-active); transform: translateY(1px); }
 
   /* ── Hero ──────────────────────────────────────────────── */
-  .hero { text-align: center; padding: 96px 24px 64px; }
+  .hero {
+    position: relative; overflow: hidden;
+    text-align: center; padding: 112px 24px 80px;
+    background: linear-gradient(180deg, var(--sky-bottom) 0%, #DCEBDA 38%, var(--bg) 78%);
+  }
+  /* Illustrated SVG background: soft hills + drifting airships */
+  .hero-art {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 0;
+  }
+  .hero-ships { opacity: 0.16; }
+  .hero-hills { opacity: 0.55; }
+  .hero > .container { position: relative; z-index: 1; }
+
+  /* Airship drift + bob (nested groups so transforms compose) */
+  @keyframes drift { from { transform: translateX(-22px); } to { transform: translateX(22px); } }
+  @keyframes bob   { 0%,100% { transform: translateY(-5px); } 50% { transform: translateY(6px); } }
+  .drift-a { animation: drift 78s ease-in-out infinite alternate; }
+  .drift-b { animation: drift 96s ease-in-out infinite alternate; }
+  .drift-c { animation: drift 64s ease-in-out infinite alternate; }
+  .bob-a   { animation: bob 7s ease-in-out infinite; }
+  .bob-b   { animation: bob 9s ease-in-out infinite; }
+  .bob-c   { animation: bob 6s ease-in-out infinite; }
+  @media (prefers-reduced-motion: reduce) {
+    .drift-a, .drift-b, .drift-c, .bob-a, .bob-b, .bob-c { animation: none; }
+  }
+
   .eyebrow {
-    font-size: 13px; font-weight: 500; letter-spacing: 0.08em;
-    text-transform: uppercase; color: var(--color-muted);
+    font-size: 13px; font-weight: 600; letter-spacing: 0.1em;
+    text-transform: uppercase; color: #6E5836;   /* darkened wood — clears 4.5:1 on sky gradient */
     margin: 0 0 20px;
   }
   .hero h1 {
     font-size: 56px; font-weight: 700; line-height: 1.1;
-    letter-spacing: -0.02em; color: var(--color-fg);
+    letter-spacing: -0.02em; color: var(--fg);
     margin: 0 auto; max-width: 760px;
   }
   .hero-sub {
-    font-size: 20px; color: var(--color-subtle);
-    max-width: 640px; margin: 24px auto 0; line-height: 1.5;
+    font-size: 20px; color: var(--fg-muted);
+    max-width: 660px; margin: 24px auto 0; line-height: 1.55;
   }
   .hero .btn-primary { margin-top: 40px; }
-  .hero-fineprint { margin-top: 16px; color: var(--color-muted); font-size: 14px; }
+  .hero-fineprint { margin-top: 16px; color: var(--fg-muted); font-size: 14px; }
 
   /* ── Section scaffolding ───────────────────────────────── */
-  section { padding: 72px 0; }
-  .section-head { text-align: center; max-width: 640px; margin: 0 auto 48px; }
-  .section-head h2 { font-size: 32px; font-weight: 700; letter-spacing: -0.02em; margin: 0; }
-  .section-head p { color: var(--color-muted); font-size: 17px; margin: 12px 0 0; }
+  section { padding: 80px 0; }
+  .section-head { text-align: center; max-width: 660px; margin: 0 auto 52px; }
+  .section-head h2 { font-size: 32px; font-weight: 700; letter-spacing: -0.02em; margin: 0; color: var(--fg); }
+  .section-head p { color: var(--fg-muted); font-size: 17px; margin: 12px 0 0; }
 
   /* ── Value props ───────────────────────────────────────── */
-  .props { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  .props { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; }
   .prop {
-    background: #fff; border: 1px solid var(--color-border);
-    border-radius: var(--radius); padding: 28px; box-shadow: var(--shadow-sm);
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius-card); padding: 30px 26px; box-shadow: var(--shadow-soft);
+    transition: transform 150ms, box-shadow 150ms;
   }
-  .prop h3 { font-size: 16px; font-weight: 600; color: var(--color-fg); margin: 0 0 10px; }
-  .prop p { font-size: 14px; color: var(--color-subtle); line-height: 1.6; margin: 0; }
+  .prop:hover { transform: translateY(-3px); box-shadow: var(--shadow-lift); }
+  .prop-icon { display: block; width: 32px; height: 32px; margin-bottom: 18px; color: var(--primary); }
+  .prop h3 { font-size: 16px; font-weight: 600; color: var(--fg); margin: 0 0 10px; }
+  .prop p { font-size: 14px; color: var(--fg-muted); line-height: 1.6; margin: 0; }
 
   /* ── How it works ──────────────────────────────────────── */
-  .steps { display: grid; grid-template-columns: repeat(2, 1fr); gap: 28px 48px; max-width: 880px; margin: 0 auto; }
+  .how { position: relative; overflow: hidden; }
+  .how-art {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    pointer-events: none; opacity: 0.07; z-index: 0;
+  }
+  .how > .container { position: relative; z-index: 1; }
+  .steps { display: grid; grid-template-columns: repeat(2, 1fr); gap: 32px 48px; max-width: 880px; margin: 0 auto; }
   .step { display: flex; gap: 18px; align-items: flex-start; }
   .step-num {
-    flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%;
-    background: var(--color-primary); color: #fff;
+    flex-shrink: 0; width: 34px; height: 34px; border-radius: 50%;
+    background: var(--accent-lavender); color: #fff;
     display: flex; align-items: center; justify-content: center;
     font-weight: 600; font-size: 15px;
+    box-shadow: 0 2px 8px rgba(139, 123, 184, 0.35);
   }
-  .step h3 { font-size: 16px; font-weight: 600; margin: 4px 0 6px; }
-  .step p { font-size: 14px; color: var(--color-subtle); margin: 0; line-height: 1.6; }
+  .step h3 { font-size: 16px; font-weight: 600; margin: 6px 0 6px; color: var(--fg); }
+  .step p { font-size: 14px; color: var(--fg-muted); margin: 0; line-height: 1.6; }
 
   /* ── Example report (Excel mock) ───────────────────────── */
-  .example { background: var(--color-card-bg); }
+  .example { background: var(--bg); }
   .xl-frame {
     max-width: 760px; margin: 0 auto;
-    border: 1px solid var(--color-border); border-radius: var(--radius);
-    background: #fff; box-shadow: var(--shadow-card); overflow: hidden;
+    border: 1px solid var(--border); border-radius: var(--radius);
+    background: var(--bg-card); box-shadow: var(--shadow-lift); overflow: hidden;
   }
   /* Excel-style grid: row-number gutter + columns A B C D */
   .xl-grid {
@@ -157,24 +201,24 @@
     font-size: 13px;
   }
   .xl-grid > div {
-    border-right: 1px solid var(--color-border);
-    border-bottom: 1px solid var(--color-border);
-    padding: 7px 10px; background: #fff;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 7px 10px; background: var(--bg-card);
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
   /* Column-letter header strip + row-number gutter.
      Selectors are parent-qualified so they beat `.xl-grid > div`'s
      background and don't get washed out to white. */
   .xl-grid > .xl-colhdr, .xl-grid > .xl-rownum {
-    background: #f4f4f5; color: var(--color-muted);
+    background: #F4F1E4; color: var(--fg-muted);
     text-align: center; font-weight: 500; font-size: 12px;
   }
-  .xl-grid > .xl-corner { background: #f4f4f5; }
+  .xl-grid > .xl-corner { background: #F4F1E4; }
   .xl-grid > .xl-rownum { padding: 7px 0; }
   .xl-title {
     grid-column: 2 / 5; font-weight: 700; color: #1f4e2a; font-size: 15px;
   }
-  .xl-blank { background: #fff; min-height: 14px; padding: 4px 10px; }
+  .xl-blank { background: var(--bg-card); min-height: 14px; padding: 4px 10px; }
   .xl-grid > .xl-hdr {
     background: #2e6b3a; color: #fff; font-weight: 700;
     text-align: center; border-right-color: #245530;
@@ -182,88 +226,119 @@
   .xl-q { font-weight: 700; color: #1f4e2a; }
   .xl-num { text-align: right; font-variant-numeric: tabular-nums; }
   .xl-ellipsis {
-    grid-column: 2 / 6; text-align: center; color: #a1a1aa;
+    grid-column: 2 / 6; text-align: center; color: #b6a995;
     letter-spacing: 4px; padding: 2px 0;
   }
   .xl-grid > .xl-foot {
-    grid-column: 2 / 6; font-style: italic; color: #666;
+    grid-column: 2 / 6; font-style: italic; color: var(--fg-muted);
     font-size: 11px; white-space: normal; overflow: visible;
     text-overflow: clip; line-height: 1.5;
   }
   /* Sheet tabs along the bottom */
   .xl-tabs {
-    display: flex; gap: 2px; padding: 6px 8px 0; background: #f4f4f5;
-    border-top: 1px solid var(--color-border);
+    display: flex; gap: 2px; padding: 6px 8px 0; background: #F4F1E4;
+    border-top: 1px solid var(--border);
   }
   .xl-tab {
-    font-size: 12px; font-weight: 500; color: var(--color-muted);
-    padding: 6px 14px; border: 1px solid var(--color-border);
-    border-bottom: none; border-radius: 6px 6px 0 0; background: #ececee;
+    font-size: 12px; font-weight: 500; color: var(--fg-muted);
+    padding: 6px 14px; border: 1px solid var(--border);
+    border-bottom: none; border-radius: 6px 6px 0 0; background: #EDE7D9;
   }
-  .xl-tab.active { background: #fff; color: #1f4e2a; font-weight: 600; }
-  .xl-download {
-    text-align: center; margin: 24px auto 0;
-  }
+  .xl-tab.active { background: var(--bg-card); color: #1f4e2a; font-weight: 600; }
+  .xl-download { text-align: center; margin: 24px auto 0; }
   .xl-download a {
-    font-size: 15px; font-weight: 500; color: var(--color-primary-hover);
+    font-size: 15px; font-weight: 500; color: var(--primary-hover);
     text-decoration: none;
   }
   .xl-download a:hover { text-decoration: underline; }
 
   /* ── Pricing ───────────────────────────────────────────── */
-  .pricing { background: var(--color-card-bg); }
+  .pricing { background: var(--bg); }
   .price-card {
     max-width: 480px; margin: 0 auto;
-    background: #fff; border: 1px solid var(--color-border);
-    border-radius: 16px; padding: 48px; box-shadow: var(--shadow-card);
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius-card); padding: 48px; box-shadow: var(--shadow-lift);
   }
   .price-eyebrow {
-    font-size: 12px; font-weight: 500; letter-spacing: 0.05em;
-    text-transform: uppercase; color: var(--color-primary-hover); margin: 0 0 12px;
+    font-size: 12px; font-weight: 600; letter-spacing: 0.05em;
+    text-transform: uppercase; color: var(--primary-hover); margin: 0 0 12px;
   }
-  .price-card h2 { font-size: 28px; font-weight: 600; letter-spacing: -0.01em; margin: 0 0 20px; }
-  .price-line { font-size: 18px; font-weight: 500; color: var(--color-fg); margin: 6px 0; }
-  .price-line span { color: var(--color-muted); font-weight: 400; font-size: 16px; }
-  .price-sep { border: none; border-top: 1px solid var(--color-border); margin: 24px 0; }
+  .price-card h2 { font-size: 28px; font-weight: 600; letter-spacing: -0.01em; margin: 0 0 20px; color: var(--fg); }
+  .price-line { font-size: 18px; font-weight: 500; color: var(--fg); margin: 6px 0; }
+  .price-line span { color: var(--fg-muted); font-weight: 400; font-size: 16px; }
+  .price-sep { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
   .price-list { list-style: none; padding: 0; margin: 0 0 28px; }
   .price-list li {
-    font-size: 15px; color: var(--color-subtle); padding: 7px 0 7px 28px;
+    font-size: 15px; color: var(--fg-muted); padding: 7px 0 7px 28px;
     position: relative; line-height: 1.5;
   }
   .price-list li::before {
     content: "✓"; position: absolute; left: 0; top: 6px;
-    color: var(--color-primary); font-weight: 700;
+    color: var(--primary); font-weight: 700;
   }
   .price-card .btn-primary { display: block; text-align: center; width: 100%; }
+
+  /* ── Consultant section ────────────────────────────────── */
+  .consultant { background: var(--bg); }
+  .consultant-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center;
+    max-width: 980px; margin: 0 auto;
+  }
+  .consultant-copy h2 {
+    font-size: 30px; font-weight: 700; letter-spacing: -0.02em;
+    margin: 0 0 18px; color: var(--fg); line-height: 1.15;
+  }
+  .consultant-copy p { font-size: 17px; color: var(--fg-muted); margin: 0; line-height: 1.6; }
+  .consultant-card {
+    background: rgba(139, 123, 184, 0.08);
+    border: 1px solid rgba(139, 123, 184, 0.28);
+    border-radius: var(--radius-card); padding: 32px 30px;
+    box-shadow: var(--shadow-soft);
+  }
+  .consultant-card h3 {
+    font-size: 13px; font-weight: 600; letter-spacing: 0.06em;
+    text-transform: uppercase; color: #645488; margin: 0 0 18px;  /* darkened lavender — clears 4.5:1 */
+  }
+  .consultant-list { list-style: none; padding: 0; margin: 0; }
+  .consultant-list li {
+    font-size: 15px; color: var(--fg); padding: 9px 0 9px 30px;
+    position: relative; line-height: 1.5;
+  }
+  .consultant-list li + li { border-top: 1px solid rgba(139, 123, 184, 0.18); }
+  .consultant-list li::before {
+    content: ""; position: absolute; left: 2px; top: 15px;
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--accent-lavender);
+  }
 
   /* ── FAQ ───────────────────────────────────────────────── */
   .faq { max-width: 760px; margin: 0 auto; }
   details {
-    border-bottom: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--border);
     padding: 4px 0;
   }
   summary {
     cursor: pointer; list-style: none;
-    font-size: 17px; font-weight: 500; color: var(--color-fg);
+    font-size: 17px; font-weight: 500; color: var(--fg);
     padding: 20px 36px 20px 0; position: relative;
   }
   summary::-webkit-details-marker { display: none; }
   summary::after {
     content: "+"; position: absolute; right: 4px; top: 18px;
-    font-size: 22px; font-weight: 400; color: var(--color-muted);
+    font-size: 22px; font-weight: 400; color: var(--fg-muted);
     transition: transform 150ms;
   }
   details[open] summary::after { content: "−"; }
-  details p { margin: 0 0 20px; color: var(--color-subtle); font-size: 15px; line-height: 1.6; max-width: 680px; }
+  details p { margin: 0 0 20px; color: var(--fg-muted); font-size: 15px; line-height: 1.6; max-width: 680px; }
 
   /* ── Footer ────────────────────────────────────────────── */
-  .footer { background: var(--color-card-bg); border-top: 1px solid var(--color-border); padding: 48px 0; }
+  .footer { background: #EFEADB; border-top: 1px solid var(--border); padding: 48px 0; }
   .footer-inner { display: flex; justify-content: space-between; gap: 32px; flex-wrap: wrap; }
   .footer-brand .wordmark { display: inline-block; margin-bottom: 6px; }
-  .footer-brand p { margin: 0; color: var(--color-muted); font-size: 14px; }
+  .footer-brand p { margin: 0; color: var(--fg-muted); font-size: 14px; }
   .footer-links { display: flex; flex-direction: column; gap: 8px; text-align: right; }
-  .footer-links a, .footer-links span { font-size: 14px; color: var(--color-subtle); text-decoration: none; }
-  .footer-links a:hover { color: var(--color-fg); text-decoration: underline; }
+  .footer-links a, .footer-links span { font-size: 14px; color: var(--fg-muted); text-decoration: none; }
+  .footer-links a:hover { color: var(--fg); text-decoration: underline; }
 
   /* ── Responsive ────────────────────────────────────────── */
   @media (max-width: 1024px) {
@@ -271,15 +346,18 @@
   }
   @media (max-width: 640px) {
     .nav-inner { height: 56px; }
-    .hero { padding: 48px 20px 40px; }
+    .hero { padding: 56px 20px 48px; }
     .hero h1 { font-size: 36px; }
     .hero-sub { font-size: 16px; }
+    .hero-ships { display: none; }   /* hide airships on mobile */
     section { padding: 56px 0; }
     .section-head { margin-bottom: 36px; }
     .section-head h2 { font-size: 26px; }
     .props { grid-template-columns: 1fr; }
     .steps { grid-template-columns: 1fr; }
     .price-card { padding: 32px 24px; }
+    .consultant-grid { grid-template-columns: 1fr; gap: 36px; }
+    .consultant-copy h2 { font-size: 26px; }
     .footer-inner { flex-direction: column; }
     .footer-links { text-align: left; }
   }
@@ -300,15 +378,48 @@
 
   <!-- Hero -->
   <section class="hero" aria-labelledby="hero-title">
-    <p class="eyebrow">For Vermont community solar operators</p>
-    <h1 id="hero-title">Quarterly solar reports, automated.</h1>
-    <p class="hero-sub">
-      Pull your GMP bills, generate NEPOOL-format Excel reports, and email them
-      to your clients — every quarter, on autopilot. Built for operators tired
-      of hand-building spreadsheets.
-    </p>
-    <a class="btn-primary" href="/onboarding/">Get started →</a>
-    <p class="hero-fineprint">from $45/array/month · $250 one-time setup · cancel anytime</p>
+    <!-- Illustrated pastoral background: soft hills + drifting airships -->
+    <svg class="hero-art" viewBox="0 0 1440 600" preserveAspectRatio="xMidYMax slice" aria-hidden="true" focusable="false">
+      <defs>
+        <!-- Reusable airship -->
+        <g id="airship">
+          <ellipse cx="0" cy="0" rx="74" ry="26" fill="#FBF8F0" stroke="#C9BCA6" stroke-width="2"/>
+          <path d="M -74 0 q -16 0 -22 -12 q 14 4 22 4 z" fill="#EFE7D6"/>
+          <path d="M -74 0 q -16 0 -22 12 q 14 -4 22 -4 z" fill="#E4DAC6"/>
+          <path d="M -88 -12 l 14 8 l -2 -16 z" fill="#D8CDB6"/>
+          <line x1="-50" y1="0" x2="50" y2="0" stroke="#D8CDB6" stroke-width="1.2"/>
+          <line x1="-18" y1="26" x2="-18" y2="34" stroke="#B7A98E" stroke-width="1.4"/>
+          <line x1="18" y1="26" x2="18" y2="34" stroke="#B7A98E" stroke-width="1.4"/>
+          <rect x="-22" y="32" width="44" height="13" rx="5" fill="#9C8767" stroke="#83704F" stroke-width="1.4"/>
+        </g>
+      </defs>
+
+      <!-- Drifting airships, upper right -->
+      <g class="hero-ships">
+        <g transform="translate(1140,108) scale(1.0)"><g class="drift-a"><g class="bob-a"><use href="#airship"/></g></g></g>
+        <g transform="translate(980,178) scale(0.62)"><g class="drift-b"><g class="bob-b"><use href="#airship"/></g></g></g>
+        <g transform="translate(1280,232) scale(0.42)"><g class="drift-c"><g class="bob-c"><use href="#airship"/></g></g></g>
+      </g>
+
+      <!-- Soft rolling hills along the bottom -->
+      <g class="hero-hills">
+        <path d="M0 470 C 240 410, 460 470, 720 452 C 980 434, 1180 392, 1440 440 L1440 600 L0 600 Z" fill="#C9DCAE"/>
+        <path d="M0 520 C 300 470, 520 524, 780 510 C 1040 496, 1240 470, 1440 506 L1440 600 L0 600 Z" fill="#AFC98C"/>
+        <path d="M0 560 C 280 532, 560 566, 860 556 C 1120 548, 1280 536, 1440 558 L1440 600 L0 600 Z" fill="#94B570"/>
+      </g>
+    </svg>
+
+    <div class="container">
+      <p class="eyebrow">Built for Vermont's community solar</p>
+      <h1 id="hero-title">Quarterly solar reports, automated.</h1>
+      <p class="hero-sub">
+        Every quarter, you stamp dozens of reports for community solar operators
+        across Vermont. This stamps them for you — pixel-perfect NEPOOL workbooks,
+        emailed on autopilot, branded with your name.
+      </p>
+      <a class="btn-primary" href="/onboarding/">Get started →</a>
+      <p class="hero-fineprint">from $45/array/month · $250 setup · cancel anytime</p>
+    </div>
   </section>
 
   <!-- Value props -->
@@ -316,23 +427,47 @@
     <div class="container">
       <div class="props">
         <div class="prop">
+          <!-- capture: circle with downward arrow -->
+          <svg class="prop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="9"/>
+            <path d="M12 7v8"/>
+            <path d="M8.5 11.5 12 15l3.5-3.5"/>
+          </svg>
           <h3>Auto-pull GMP data</h3>
-          <p>Our Chrome extension grabs your Green Mountain Power bills the moment
-          you log in. No CSV exports, no copy-paste.</p>
+          <p>Each operator's Chrome extension grabs their Green Mountain Power bills
+          the moment they log in. No CSV exports, no copy-paste.</p>
         </div>
         <div class="prop">
+          <!-- stacked sheets -->
+          <svg class="prop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="7" y="3" width="13" height="16" rx="2"/>
+            <path d="M4 7v12a2 2 0 0 0 2 2h10"/>
+            <path d="M10.5 8.5h6M10.5 12h6M10.5 15.5h3.5"/>
+          </svg>
           <h3>NEPOOL-format Excel</h3>
           <p>Pixel-perfect quarterly workbooks. One sheet per array, rolling 6
           quarters, floor-of-MWh REC counts, standard footnote.</p>
         </div>
         <div class="prop">
+          <!-- paper plane -->
+          <svg class="prop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 3 10.5 13.5"/>
+            <path d="M21 3 14.5 21l-4-7.5L3 9.5 21 3z"/>
+          </svg>
           <h3>Email clients automatically</h3>
-          <p>Reports go out on your schedule — weekly, monthly, or quarterly.
-          Each client gets their own workbook to their own email.</p>
+          <p>Reports go out on your schedule — and under your name. Each operator
+          gets their own workbook to their own inbox.</p>
         </div>
         <div class="prop">
+          <!-- three connected nodes -->
+          <svg class="prop-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="6" cy="6" r="2.5"/>
+            <circle cx="18" cy="7" r="2.5"/>
+            <circle cx="12" cy="18" r="2.5"/>
+            <path d="M8.2 7.4 10.4 16M15.8 8.4 13 16M8 6.3h7.5"/>
+          </svg>
           <h3>Multi-client portal</h3>
-          <p>Manage all your reporting customers from one dashboard. Add arrays,
+          <p>Manage every operator you serve from one dashboard. Add arrays,
           edit NEPOOL IDs, send ad-hoc reports.</p>
         </div>
       </div>
@@ -454,7 +589,19 @@
   </section>
 
   <!-- How it works -->
-  <section aria-labelledby="how-title">
+  <section class="how" aria-labelledby="how-title">
+    <!-- Low-opacity canola/lavender field stripes -->
+    <svg class="how-art" viewBox="0 0 1440 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+      <g transform="skewY(-6)">
+        <rect x="0" y="40"  width="1440" height="34" fill="#E8C547"/>
+        <rect x="0" y="92"  width="1440" height="34" fill="#8B7BB8"/>
+        <rect x="0" y="144" width="1440" height="34" fill="#E8C547"/>
+        <rect x="0" y="196" width="1440" height="34" fill="#8B7BB8"/>
+        <rect x="0" y="248" width="1440" height="34" fill="#E8C547"/>
+        <rect x="0" y="300" width="1440" height="34" fill="#8B7BB8"/>
+        <rect x="0" y="352" width="1440" height="34" fill="#E8C547"/>
+      </g>
+    </svg>
     <div class="container">
       <div class="section-head">
         <h2 id="how-title">How it works</h2>
@@ -522,6 +669,30 @@
     </div>
   </section>
 
+  <!-- For consultants and stamping agents -->
+  <section class="consultant" aria-labelledby="consultant-title">
+    <div class="container">
+      <div class="consultant-grid">
+        <div class="consultant-copy">
+          <h2 id="consultant-title">Built for the consultants who serve Vermont's operators</h2>
+          <p>You're the one signing the reports, dealing with the deadlines,
+          fielding the phone calls. We built this for you, not the operators.
+          They never have to learn a new tool.</p>
+        </div>
+        <div class="consultant-card">
+          <h3>What's in it for you</h3>
+          <ul class="consultant-list">
+            <li>White-label email — reports go out from <strong>your</strong> address with <strong>your</strong> signature</li>
+            <li>Manage 5 or 500 operators from one dashboard</li>
+            <li>Import your existing roster spreadsheet with one click</li>
+            <li>We never contact your clients directly without your sign-off</li>
+            <li>Cancel any time — your data exports as CSVs</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- FAQ -->
   <section aria-labelledby="faq-title">
     <div class="container">
@@ -535,8 +706,9 @@
         </details>
         <details>
           <summary>How do you get my bills?</summary>
-          <p>A Chrome extension reads them from your existing GMP account. No password
-          sharing. Your data never leaves your browser except as bills sent to our API.</p>
+          <p>Each of your operator clients installs our Chrome extension and logs into
+          their GMP account once. We capture bills in the background and aggregate them
+          in your dashboard. You stay in control of communication and reporting.</p>
         </details>
         <details>
           <summary>Can I customize the report format?</summary>
