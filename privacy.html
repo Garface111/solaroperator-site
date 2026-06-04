@@ -45,8 +45,9 @@ site and sends it to the Solar Operator backend
 <ul>
   <li>Your Green Mountain Power account identifier, username, email, and
   full name (as shown on your GMP profile)</li>
-  <li>The temporary session token (JWT) your browser uses to authenticate
-  to Green Mountain Power</li>
+  <li>The temporary sign-in session your browser holds with Green Mountain
+  Power. We use this to read your bill data in the same way you would by
+  clicking around the GMP site yourself.</li>
   <li>A list of utility accounts (meters) attached to your GMP login,
   including account number, customer number, nickname, and the URL of the
   current bill PDF</li>
@@ -62,16 +63,16 @@ site and sends it to the Solar Operator backend
 </ul>
 
 <h2>How we use it</h2>
-<p>We use your captured session token to fetch your bill PDFs and billing
-history from GMP's API on a recurring schedule. The kWh production figures
+<p>We use your captured sign-in session to fetch your bill PDFs and billing
+history from Green Mountain Power on a recurring schedule. The kWh production figures
 we extract are written into the reporting spreadsheet you provided to us
 during onboarding. That spreadsheet is then emailed to the address you
 specified.</p>
 
 <h2>How long we keep it</h2>
 <ul>
-  <li><strong>Session token:</strong> retained only while valid (GMP tokens
-  expire after approximately 21 days). Replaced on each fresh capture.</li>
+  <li><strong>Sign-in session:</strong> retained only while valid (Green Mountain Power
+  sessions expire after approximately 21 days). Replaced on each fresh capture.</li>
   <li><strong>Account metadata + billing data:</strong> retained while
   your Solar Operator account is active, so historical reports remain
   available.</li>
@@ -119,13 +120,17 @@ settings to remove the local copy immediately.</p>
       reminder as a desktop notification when your token is within 3 days
       of expiring.</td></tr>
     <tr><td>Host: <code>greenmountainpower.com</code></td><td>So the
-      content script can read GMP's local storage after you sign in.</td></tr>
+      extension can read your GMP sign-in data after you log in.</td></tr>
     <tr><td>Host: <code>api.greenmountainpower.com</code></td><td>Reserved
-      for future use; the extension currently makes no calls here.</td></tr>
+      for future use; the extension currently makes no requests here.</td></tr>
     <tr><td>Host: <code>api.solaroperator.org</code></td><td>So we can
       deliver captured data to your Solar Operator workspace.</td></tr>
   </tbody>
 </table>
+
+<h2>Third-party processors</h2>
+<p>We use <a href="https://resend.com">Resend.com</a> as our third-party email delivery
+provider to send reports and sign-in links on your behalf.</p>
 
 <h2>Changes to this policy</h2>
 <p>If we change this policy, we will email registered Solar Operator
