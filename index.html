@@ -367,6 +367,26 @@
   .footer-links a, .footer-links span { font-size: 14px; color: var(--fg-muted); text-decoration: none; }
   .footer-links a:hover { color: var(--fg); text-decoration: underline; }
 
+  /* ── Testimonials ──────────────────────────────────────── */
+  /* TODO: change display:none → display:block when real quotes land */
+  .testimonials { background: var(--bg); display: none; }
+  .t-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 28px; max-width: 900px; margin: 0 auto;
+  }
+  blockquote {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius-card); padding: 32px 28px;
+    box-shadow: var(--shadow-soft); margin: 0;
+  }
+  blockquote p {
+    font-size: 16px; color: var(--fg); line-height: 1.65; margin: 0 0 18px;
+    font-style: italic;
+  }
+  blockquote footer {
+    font-size: 14px; font-weight: 600; color: var(--fg-muted);
+  }
+
   /* ── Responsive ────────────────────────────────────────── */
   @media (max-width: 1024px) {
     .props { grid-template-columns: repeat(2, 1fr); }
@@ -835,6 +855,22 @@
           or remove arrays — you'll always see the change before it hits your card.
           Either way, you only ever pay for the arrays you actually report on.</p>
         </details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials — hidden until real quotes land; uncomment .testimonials { display: block } in CSS -->
+  <section class="testimonials" aria-labelledby="proof-title">
+    <div class="container">
+      <div class="section-head">
+        <h2 id="proof-title">From Vermont solar consultants</h2>
+      </div>
+      <div class="t-grid">
+        <!-- TODO: real quotes after first 3 customers ship a quarter -->
+        <blockquote>
+          <p>[Pending: a real one-paragraph quote from a working Vermont consultant who has shipped a quarterly cycle.]</p>
+          <footer>— Name, Firm, Town VT</footer>
+        </blockquote>
       </div>
     </div>
   </section>
