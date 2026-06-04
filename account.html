@@ -325,7 +325,7 @@
     <h3 id="array-modal-title">Add an array</h3>
     <p class="modal-sub" id="array-modal-sub">
       A solar array is one physical installation. It can be powered by one
-      or more utility logins (e.g. an array split across multiple GMP
+      or more utility logins (e.g. an array split across multiple utility
       account numbers).
     </p>
 
@@ -473,7 +473,7 @@ async function loadAccount() {
     $("s-last-pull").textContent = me.last_pull_at ? fmtDate(me.last_pull_at) : "Pending";
     $("s-session-exp").textContent = me.session && me.session.expires_at
       ? fmtDate(me.session.expires_at)
-      : "No active session — install the Chrome extension and sign into GMP";
+      : "No active session — install the Chrome extension and sign into your utility portal";
 
     $("freq").value = me.report_frequency || "monthly";
     $("email").value = me.email || "";
