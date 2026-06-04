@@ -189,31 +189,34 @@
 
   /* ── Example report (Excel mock) ───────────────────────── */
   .example { background: var(--bg); }
+  /* Card container: rounded, shadowed, clips the chrome cleanly. */
   .xl-frame {
     max-width: 760px; margin: 0 auto;
-    border: 1px solid var(--border); border-radius: var(--radius);
-    background: var(--bg-card); box-shadow: var(--shadow-lift); overflow: hidden;
+    border: 1px solid #D4CFC0; border-radius: 12px;
+    background: #FFFFFF;
+    box-shadow: 0 8px 32px rgba(74, 66, 56, 0.10), 0 2px 8px rgba(74, 66, 56, 0.06);
+    overflow: hidden;
   }
-  /* Excel-style grid: row-number gutter + columns A B C D */
+  /* Excel-style grid: row-number gutter + columns A B C D.
+     A full border closes all four edges; cells draw the inner gridlines. */
   .xl-grid {
     display: grid;
     grid-template-columns: 38px 1.5fr 1fr 1fr 0.8fr;
     font-size: 13px;
+    border: 1px solid #E5DDD0;
   }
   .xl-grid > div {
-    border-right: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
+    border-right: 1px solid #EDE7DD;
+    border-bottom: 1px solid #EDE7DD;
     padding: 7px 10px; background: var(--bg-card);
     white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
-  /* Column-letter header strip + row-number gutter.
-     Selectors are parent-qualified so they beat `.xl-grid > div`'s
-     background and don't get washed out to white. */
+  /* Excel chrome (A B C D strip + row-number gutter) — quiet, not loud UI. */
   .xl-grid > .xl-colhdr, .xl-grid > .xl-rownum {
-    background: #F4F1E4; color: var(--fg-muted);
+    background: #FAF8F2; color: #71717a;
     text-align: center; font-weight: 500; font-size: 12px;
   }
-  .xl-grid > .xl-corner { background: #F4F1E4; }
+  .xl-grid > .xl-corner { background: #FAF8F2; }
   .xl-grid > .xl-rownum { padding: 7px 0; }
   .xl-title {
     grid-column: 2 / 5; font-weight: 700; color: #1f4e2a; font-size: 15px;
@@ -222,6 +225,12 @@
   .xl-grid > .xl-hdr {
     background: #2e6b3a; color: #fff; font-weight: 700;
     text-align: center; border-right-color: #245530;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.25);
+  }
+  /* Intentional spacer rows (22, 26, 30) — faint gridlines, not missing data. */
+  .xl-grid > .xl-spacer {
+    border-right-color: rgba(0, 0, 0, 0.04);
+    border-bottom-color: rgba(0, 0, 0, 0.04);
   }
   .xl-q { font-weight: 700; color: #1f4e2a; }
   .xl-num { text-align: right; font-variant-numeric: tabular-nums; }
@@ -233,18 +242,22 @@
     grid-column: 2 / 6; font-style: italic; color: var(--fg-muted);
     font-size: 11px; white-space: normal; overflow: visible;
     text-overflow: clip; line-height: 1.5;
+    border-top: 1px solid #E5DDD0; background: rgba(232, 197, 71, 0.04);
   }
-  /* Sheet tabs along the bottom */
+  /* Sheet tabs along the bottom — tied to the grid by a top border. */
   .xl-tabs {
     display: flex; gap: 2px; padding: 6px 8px 0; background: #F4F1E4;
-    border-top: 1px solid var(--border);
+    border-top: 1px solid #E5DDD0;
   }
   .xl-tab {
-    font-size: 12px; font-weight: 500; color: var(--fg-muted);
+    font-size: 12px; font-weight: 500; color: #a1a1aa;
     padding: 6px 14px; border: 1px solid var(--border);
     border-bottom: none; border-radius: 6px 6px 0 0; background: #EDE7D9;
   }
-  .xl-tab.active { background: var(--bg-card); color: #1f4e2a; font-weight: 600; }
+  .xl-tab.active {
+    background: var(--bg-card); color: #1f4e2a; font-weight: 600;
+    border-bottom: 3px solid #047857;
+  }
   .xl-download { text-align: center; margin: 24px auto 0; }
   .xl-download a {
     font-size: 15px; font-weight: 500; color: var(--primary-hover);
@@ -528,7 +541,7 @@
           <div class="xl-num">28.8</div>
           <div class="xl-num">28</div>
           <div class="xl-rownum">22</div>
-          <div></div><div></div><div></div><div></div>
+          <div class="xl-spacer"></div><div class="xl-spacer"></div><div class="xl-spacer"></div><div class="xl-spacer"></div>
 
           <!-- Q4 2025 -->
           <div class="xl-rownum">23</div>
@@ -547,7 +560,7 @@
           <div class="xl-num">15</div>
           <div class="xl-num">15</div>
           <div class="xl-rownum">26</div>
-          <div></div><div></div><div></div><div></div>
+          <div class="xl-spacer"></div><div class="xl-spacer"></div><div class="xl-spacer"></div><div class="xl-spacer"></div>
 
           <!-- Q1 2026 (most recent complete quarter) -->
           <div class="xl-rownum">27</div>
