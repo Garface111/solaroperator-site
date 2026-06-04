@@ -226,7 +226,7 @@
       <div class="stat"><span class="label">Utility accounts on file</span><span class="val" id="s-accounts">—</span></div>
       <div class="stat"><span class="label">Bills collected</span><span class="val" id="s-bills">—</span></div>
       <div class="stat"><span class="label">Last bill pull</span><span class="val" id="s-last-pull">—</span></div>
-      <div class="stat"><span class="label">GMP session expires</span><span class="val" id="s-session-exp">—</span></div>
+      <div class="stat"><span class="label">Green Mountain Power (GMP) session expires</span><span class="val" id="s-session-exp">—</span></div>
       <button class="btn btn-block" id="send-report-btn" type="button">
         Send all my client reports now
       </button>
@@ -473,7 +473,7 @@ async function loadAccount() {
     $("s-last-pull").textContent = me.last_pull_at ? fmtDate(me.last_pull_at) : "Pending";
     $("s-session-exp").textContent = me.session && me.session.expires_at
       ? fmtDate(me.session.expires_at)
-      : "No GMP session yet — install the Chrome extension and sign into GMP";
+      : "No active session — install the Chrome extension and sign into GMP";
 
     $("freq").value = me.report_frequency || "monthly";
     $("email").value = me.email || "";
