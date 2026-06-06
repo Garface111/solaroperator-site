@@ -839,6 +839,31 @@
           a custom template.</p>
         </details>
         <details>
+          <summary>How long until clients actually receive my reports? Any email propagation issues?</summary>
+          <p>Reports leave our queue within seconds of being generated. After that,
+          delivery is at the mercy of normal email plumbing — most inboxes get it in
+          under a minute, but a few quirks to know about:</p>
+          <p><strong>Spam folder on first send.</strong> The very first quarterly report we
+          send to a brand-new client address sometimes lands in Promotions or Spam,
+          especially for Gmail and Outlook. Once they mark it "Not spam" or move it to
+          the inbox, subsequent quarters route straight through. We'll flag any client
+          whose mailbox bounced or marked us spam right in the dashboard.</p>
+          <p><strong>Corporate filters can hold mail 5–15 min.</strong> Some
+          IT-managed domains (especially municipal/utility accounts) run inbound
+          gateways that quarantine attachments. If a client says "I never got it"
+          after 20 minutes, the dashboard's "resend" button will fire a fresh copy —
+          and you'll see a delivery/bounce status next to each address.</p>
+          <p><strong>DNS propagation only matters once.</strong> If you white-label
+          reports to send from your own domain instead of <code>admin@solaroperator.org</code>,
+          you'll add three DNS records (SPF/DKIM/return-path). Those take anywhere
+          from 5 minutes to 24 hours to propagate worldwide — we hold off on routing
+          your mail through that domain until we've confirmed all three are live, so
+          there's never a window where reports get rejected mid-transit.</p>
+          <p>If you ever suspect a delivery problem, the per-client status in the
+          dashboard tells you exactly what happened: delivered, bounced, or
+          marked-as-spam, with timestamps.</p>
+        </details>
+        <details>
           <summary>What happens if I cancel?</summary>
           <p>Cancel any time from your dashboard. Your data stays accessible for 30 days after.</p>
         </details>
