@@ -105,7 +105,7 @@
 
     <div class="footer">
       Questions? Just email
-      <a href="mailto:support@solaroperator.org">support@solaroperator.org</a>
+      <a href="mailto:admin@solaroperator.org">admin@solaroperator.org</a>
       — same business day response, no auto-replies.
     </div>
 
@@ -145,7 +145,7 @@
     const sessionId = getQueryParam("session_id");
     if (!sessionId) {
       showError("Missing session id. If you just paid and got redirected here, " +
-        "contact <a href='mailto:support@solaroperator.org'>support@solaroperator.org</a> " +
+        "contact <a href='mailto:admin@solaroperator.org'>admin@solaroperator.org</a> " +
         "and we'll get your activation code right over.");
       return;
     }
@@ -166,7 +166,7 @@
       showActivation(await res.json());
     } catch (e) {
       showError("Couldn't load your activation code: " + e.message +
-        "<br><br>Please contact <a href='mailto:support@solaroperator.org'>support@solaroperator.org</a> " +
+        "<br><br>Please contact <a href='mailto:admin@solaroperator.org'>admin@solaroperator.org</a> " +
         "with your payment confirmation and we'll send your activation code right over.");
     }
   }
