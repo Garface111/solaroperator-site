@@ -178,12 +178,15 @@
       })
       .then(function (data) {
         if (done) return;            // timed out already
-        if (!data || data.ok !== true || !data.token) {
+        // Backend returns `session_token` per the demo-tenant agent's contract.
+      // Accepting both keys defensively so we survive future contract drift.
+      var token = data && (data.session_token || data.token);
+      if (!data || data.ok !== true || !token) {
           throw new Error("unexpected response: " + JSON.stringify(data));
         }
         done = true;
         clearTimeout(timer);
-        localStorage.setItem(SPA_TOKEN_KEY, data.token);
+        localStorage.setItem(SPA_TOKEN_KEY, token);
         window.location.href = SPA_HOME;
       })
       .catch(function (err) {
