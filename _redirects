@@ -10,6 +10,11 @@
 /accounts             https://web-production-49c83.up.railway.app/app/   200
 /accounts/*           https://web-production-49c83.up.railway.app/app/:splat   200
 
+# ── Demo entrypoint (homepage "Try a sample account" CTA) ───────────────
+# Clean URL for the static redirect page. The page itself calls the API via
+# the same-origin /v1/* proxy above, so no extra API rule is needed here.
+/demo-account         /demo-account.html   200
+
 # ── Legacy signup entrypoints → onboarding wizard ───────────────────────
 /signup               /onboarding/   301
 /signup.html          /onboarding/   301
