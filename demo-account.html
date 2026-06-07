@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Loading your demo… — Solar Operator</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#047857">
+
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="favicon-16.png">
+<link rel="shortcut icon" href="favicon.ico">
+<link rel="apple-touch-icon" sizes="256x256" href="favicon-256.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  /* Palette mirrors index.html — keep in sync if the site theme changes. */
+  :root {
+    --bg: #F4F1E4;
+    --bg-card: #FFFFFF;
+    --fg: #2A2520;
+    --fg-muted: #6B5E55;
+    --border: #E5DDD0;
+    --primary: #047857;
+    --primary-hover: #065F46;
+    --accent-wood: #8B6F47;
+    --radius-card: 18px;
+    --shadow-soft: 0 4px 24px rgba(74, 66, 56, 0.08);
+    --shadow-lift: 0 10px 40px rgba(74, 66, 56, 0.12);
+    --font: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; font-family: var(--font);
+    background: var(--bg); color: var(--fg); line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--primary); outline-offset: 2px; border-radius: 4px;
+  }
+  .container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+  /* ── Nav (mirrors index.html) ──────────────────────────── */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(244, 241, 228, 0.85);
+    backdrop-filter: saturate(160%) blur(10px);
+    -webkit-backdrop-filter: saturate(160%) blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-inner {
+    display: flex; align-items: center; justify-content: space-between; height: 64px;
+  }
+  .wordmark { font-weight: 600; font-size: 17px; letter-spacing: -0.01em; text-decoration: none; color: var(--fg); }
+  .nav-link {
+    font-size: 14px; font-weight: 500; color: var(--fg-muted);
+    text-decoration: none; padding: 8px 14px; border-radius: 8px;
+    transition: color 150ms, background 150ms;
+  }
+  .nav-link:hover { color: var(--fg); background: rgba(139, 111, 71, 0.08); }
+
+  /* ── Centered loading card ─────────────────────────────── */
+  .demo-wrap {
+    min-height: calc(100vh - 64px);
+    display: flex; align-items: center; justify-content: center;
+    padding: 48px 24px;
+  }
+  .demo-card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius-card); padding: 48px 44px;
+    box-shadow: var(--shadow-lift);
+    max-width: 480px; width: 100%; text-align: center;
+  }
+  .demo-card h1 {
+    font-size: 24px; font-weight: 700; letter-spacing: -0.01em;
+    color: var(--fg); margin: 0 0 12px;
+  }
+  .demo-card p { font-size: 15px; color: var(--fg-muted); margin: 0; line-height: 1.6; }
+  .demo-card .demo-sub { max-width: 380px; margin: 0 auto; }
+
+  /* Branded loader — a quiet wave of three emerald dots. No blue spinner. */
+  .demo-dots { display: flex; gap: 10px; justify-content: center; margin: 0 0 28px; }
+  .demo-dots span {
+    width: 11px; height: 11px; border-radius: 50%;
+    background: var(--primary);
+    animation: demo-pulse 1.2s ease-in-out infinite;
+  }
+  .demo-dots span:nth-child(2) { animation-delay: 0.18s; background: var(--accent-wood); }
+  .demo-dots span:nth-child(3) { animation-delay: 0.36s; }
+  @keyframes demo-pulse {
+    0%, 100% { opacity: 0.28; transform: translateY(0) scale(0.85); }
+    40%      { opacity: 1;    transform: translateY(-5px) scale(1); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .demo-dots span { animation: none; opacity: 0.7; }
+  }
+
+  /* Fallback / error state */
+  .demo-fallback a { color: var(--primary-hover); font-weight: 600; text-decoration: none; }
+  .demo-fallback a:hover { text-decoration: underline; }
+
+  @media (max-width: 640px) {
+    .nav-inner { height: 56px; }
+    .demo-wrap { min-height: calc(100vh - 56px); }
+    .demo-card { padding: 36px 28px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="container nav-inner">
+    <a class="wordmark" href="/">Solar Operator</a>
+    <nav aria-label="Primary">
+      <a class="nav-link" href="/accounts">Sign in</a>
+    </nav>
+  </div>
+</header>
+
+<main class="demo-wrap">
+  <div class="demo-card" id="demo-card" role="status" aria-live="polite">
+    <div class="demo-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+    <h1>Loading your demo…</h1>
+    <p class="demo-sub">We&rsquo;re signing you in to a sample Northeast Community Solar
+    account. You&rsquo;ll see real-looking data &mdash; kept read-only so you can&rsquo;t
+    break anything.</p>
+  </div>
+</main>
+
+<script>
+(function () {
+  // ── Integration contract (verified against the live infra, NOT the brief) ──
+  // • Endpoint is /v1/demo/enter, not /api/v1/demo/enter: Netlify proxies
+  //   /v1/* → Railway (see _redirects); there is no /api/* proxy, and every
+  //   backend route lives under /v1/*. Same-origin relative URL.
+  // • The token is stored under "so_session" (raw bearer string), because the
+  //   accounts SPA reads localStorage.getItem("so_session"). It does NOT read
+  //   "so_token". Change both lines together if the backend contract changes.
+  var DEMO_ENTER_URL = "/v1/demo/enter";
+  var SPA_TOKEN_KEY  = "so_session";
+  var SPA_HOME       = "/accounts/";
+  var TIMEOUT_MS     = 8000;
+
+  function showFallback() {
+    var card = document.getElementById("demo-card");
+    if (!card) return;
+    card.classList.add("demo-fallback");
+    card.innerHTML =
+      '<h1>Demo temporarily unavailable</h1>' +
+      '<p>The demo&rsquo;s temporarily unavailable &mdash; please try the ' +
+      '<a href="/signup">signup</a> link instead.</p>';
+  }
+
+  function enterDemo() {
+    var done = false;
+    var controller = ("AbortController" in window) ? new AbortController() : null;
+
+    var timer = setTimeout(function () {
+      if (done) return;
+      done = true;
+      if (controller) controller.abort();
+      console.error("[demo] /v1/demo/enter timed out after " + TIMEOUT_MS + "ms");
+      showFallback();
+    }, TIMEOUT_MS);
+
+    fetch(DEMO_ENTER_URL, {
+      headers: { "Accept": "application/json" },
+      signal: controller ? controller.signal : undefined
+    })
+      .then(function (res) {
+        if (!res.ok) throw new Error("HTTP " + res.status);
+        return res.json();
+      })
+      .then(function (data) {
+        if (done) return;            // timed out already
+        if (!data || data.ok !== true || !data.token) {
+          throw new Error("unexpected response: " + JSON.stringify(data));
+        }
+        done = true;
+        clearTimeout(timer);
+        localStorage.setItem(SPA_TOKEN_KEY, data.token);
+        window.location.href = SPA_HOME;
+      })
+      .catch(function (err) {
+        if (done) return;            // already handled by the timeout
+        done = true;
+        clearTimeout(timer);
+        console.error("[demo] could not enter demo:", err);
+        showFallback();
+      });
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", enterDemo);
+  } else {
+    enterDemo();
+  }
+}());
+</script>
+</body>
+</html>
