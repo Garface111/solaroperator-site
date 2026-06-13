@@ -1,12 +1,47 @@
+# ════════════════════════════════════════════════════════════════════════
+# DOMAIN CANONICALIZATION (Jun 2026)
+# This Netlify site serves BOTH nepooloperator.com (canonical brand domain)
+# and the legacy solaroperator.org. Rules below 301 the legacy domain's
+# USER-FACING entry routes to nepooloperator.com so the funnel is clean.
+#
+# NOT redirected (kept dual-domain on purpose):
+#   /v1/*      — API proxy. A 301 across a POST risks dropping the body, and
+#                the extension/API callers expect a stable host.
+#   /accounts* — dashboard SPA. The Chrome extension's so_bridge.js pairs by
+#                injecting on the dashboard tab; the PUBLISHED store extension
+#                still matches solaroperator.org, so redirecting /accounts off
+#                that host would break pairing for live users until the new
+#                (nepooloperator.com-matching) extension is published. Once
+#                v1.7.1+ is live in the store, we can add /accounts to the 301.
+# Host-scoped rules only fire for the solaroperator.org host, so the
+# nepooloperator.com alias never matches them (no redirect loop).
+# ════════════════════════════════════════════════════════════════════════
+
+# Marketing homepage → canonical brand domain (force, even though / has content).
+https://solaroperator.org/            https://nepooloperator.com/            301!
+https://www.solaroperator.org/        https://nepooloperator.com/            301!
+
+# Onboarding wizard entry → canonical brand domain (THE reported bug: the
+# NEPOOL door / legacy links landed users on solaroperator.org/onboarding).
+https://solaroperator.org/onboarding      https://nepooloperator.com/onboarding         301!
+https://solaroperator.org/onboarding/*    https://nepooloperator.com/onboarding/:splat  301!
+https://www.solaroperator.org/onboarding      https://nepooloperator.com/onboarding         301!
+https://www.solaroperator.org/onboarding/*    https://nepooloperator.com/onboarding/:splat  301!
+
+# Legacy signup aliases → canonical onboarding on the brand domain.
+https://solaroperator.org/signup          https://nepooloperator.com/onboarding/  301!
+https://solaroperator.org/signup.html     https://nepooloperator.com/onboarding/  301!
+https://solaroperator.org/get-started     https://nepooloperator.com/onboarding/  301!
+
 # ── Backend API (Railway) ──────────────────────────────────────────────
 # The dashboard + onboarding SPAs call the API with relative /v1/* paths and
-# assume same-origin. Proxy them to Railway so they work from solaroperator.org.
+# assume same-origin. Proxy them to Railway so they work from EITHER domain.
 # (Stripe webhooks + the Chrome extension still hit Railway directly.)
 /v1/*                 https://web-production-49c83.up.railway.app/v1/:splat   200
 
 # ── Account dashboard SPA (served at /app/* on Railway) ─────────────────
-# Status-200 proxy so the address bar shows solaroperator.org/accounts.
-# The SPA is built with base/basename = /accounts so assets + routing resolve.
+# Status-200 proxy so the address bar shows <domain>/accounts. Dual-domain on
+# purpose (see header note re: published extension pairing).
 /accounts             https://web-production-49c83.up.railway.app/app/   200
 /accounts/*           https://web-production-49c83.up.railway.app/app/:splat   200
 
@@ -15,14 +50,16 @@
 # the same-origin /v1/* proxy above, so no extra API rule is needed here.
 /demo-account         /demo-account.html   200
 
-# ── Legacy signup entrypoints → onboarding wizard ───────────────────────
+# ── Legacy signup entrypoints → onboarding wizard (same-origin fallback) ─
+# These fire for the nepooloperator.com host (the solaroperator.org host is
+# already caught by the host-scoped 301s above). Keeps relative links working.
 /signup               /onboarding/   301
 /signup.html          /onboarding/   301
 /get-started          /onboarding/   301
 
 # ── Onboarding wizard SPA (served at /onboarding/* on Railway) ──────────
-# SPA proxies — user sees solaroperator.org/... URL while Netlify serves
-# Railway content. Status-200 rewrite so the address bar stays clean.
-# (The /accounts proxy rules above already cover the dashboard SPA.)
+# SPA proxies — user sees <domain>/onboarding/... while Netlify serves Railway
+# content. Status-200 rewrite so the address bar stays clean. (Fires for the
+# nepooloperator.com host; solaroperator.org is 301'd above.)
 /onboarding           https://web-production-49c83.up.railway.app/onboarding/   200
 /onboarding/*         https://web-production-49c83.up.railway.app/onboarding/:splat   200
