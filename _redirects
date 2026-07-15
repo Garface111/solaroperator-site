@@ -39,6 +39,14 @@ https://solaroperator.org/get-started     https://nepooloperator.com/onboarding/
 # (Stripe webhooks + the Chrome extension still hit Railway directly.)
 /v1/*                 https://web-production-49c83.up.railway.app/v1/:splat   200
 
+# ── Admin / Ford Operator boards (Railway FastAPI) ──────────────────────
+# Funnel dashboard, escalations inbox, etc. Netlify has no static /admin/* —
+# without this proxy nepooloperator.com/admin/* is a Netlify 404 even though
+# the app is live on Railway (Ford 2026-07-14).
+/admin/*              https://web-production-49c83.up.railway.app/admin/:splat  200
+/admin                https://web-production-49c83.up.railway.app/admin  200
+/health               https://web-production-49c83.up.railway.app/health  200
+
 # ── Account dashboard SPA (served at /app/* on Railway) ─────────────────
 # Status-200 proxy so the address bar shows <domain>/accounts. Dual-domain on
 # purpose (see header note re: published extension pairing).
