@@ -1,8 +1,7 @@
 # ════════════════════════════════════════════════════════════════════════
-# THE FOLD — nepooloperator.com SUNSET (2026-07-16)
-# NEPOOL Operator is folded into Array Operator: the whole product now lives
-# at arrayoperator.com → Invoices → "Generation reports". Every user-facing
-# route on this domain (and legacy solaroperator.org) 301s to arrayoperator.com.
+# THE FOLD — nepooloperator.com SUNSET (2026-07-16, refined 2026-07-22)
+# NEPOOL Operator is folded into Array Operator as Invoices → Generation reports.
+# User-facing routes 301 to arrayoperator.com deep-linked into that subtab.
 # Netlify forwards query strings on 301s, so old magic-link emails
 # (…/accounts/?token=…) land on arrayoperator.com/accounts/?token=… where the
 # same proxied SPA exchanges them.
@@ -15,6 +14,10 @@
 #   /admin/* + /health — Ford's ops boards / probes (arrayoperator.com does
 #              not proxy /admin).
 # Map: CC/nepool-fold/MAP.md · memory nepool-fold-into-ao
+#
+# Deep link note: Netlify _redirects cannot carry a URL hash, so we land on
+# ?from=nepool and Array Operator's index.html rewrites that to
+# #reports/generation (Invoices → Generation reports).
 # ════════════════════════════════════════════════════════════════════════
 
 # ── Still-proxied machine routes (order matters: first match wins) ───────
@@ -23,7 +26,7 @@
 /admin       https://web-production-49c83.up.railway.app/admin         200
 /health      https://web-production-49c83.up.railway.app/health        200
 
-# ── User-facing routes → the folded home ────────────────────────────────
+# ── User-facing routes → Array Operator (auth / onboarding / legal stay) ─
 /accounts      https://arrayoperator.com/accounts          301!
 /accounts/*    https://arrayoperator.com/accounts/:splat   301!
 /onboarding    https://arrayoperator.com/onboarding        301!
@@ -33,6 +36,9 @@
 /get-started   https://arrayoperator.com/onboarding        301!
 /privacy       https://arrayoperator.com/privacy           301!
 /privacy.html  https://arrayoperator.com/privacy           301!
+/login         https://arrayoperator.com/login             301!
+/login/*       https://arrayoperator.com/login             301!
 
-# Everything else (landing page included) → arrayoperator.com.
-/*             https://arrayoperator.com/                  301!
+# Everything else (landing page included) → Generation reports subtab.
+# ?from=nepool is rewritten client-side to #reports/generation.
+/*             https://arrayoperator.com/?from=nepool      301!
